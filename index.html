@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EBD Brief Generator — Enable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2332;
+    --navy-mid: #243044;
+    --navy-light: #2e3d54;
+    --green: #22c55e;
+    --green-dark: #16a34a;
+    --green-pale: #f0fdf4;
+    --green-border: #bbf7d0;
+    --text: #1a2332;
+    --text-mid: #4a5568;
+    --text-light: #718096;
+    --border: #e2e8f0;
+    --border-mid: #cbd5e0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* TOP NAV */
+  .topnav {
+    background: var(--navy);
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark { display: flex; flex-direction: column; gap: 3px; }
+  .lm-row { display: flex; gap: 3px; align-items: center; }
+  .lm-long { width: 20px; height: 4px; background: var(--green); border-radius: 2px; }
+  .lm-short { width: 4px; height: 4px; background: var(--green-dark); border-radius: 1px; }
+  .logo-text { font-size: 18px; font-weight: 600; color: #fff; letter-spacing: -0.3px; }
+  .nav-label { font-size: 13px; color: rgba(255,255,255,0.45); font-family: 'DM Mono', monospace; }
+
+  /* HERO */
+  .hero {
+    background: var(--navy);
+    padding: 3rem 2rem 2.5rem;
+    border-bottom: 3px solid var(--green);
+  }
+  .hero-inner { max-width: 860px; margin: 0 auto; }
+  .hero h1 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .hero h1 span { color: var(--green); }
+  .hero p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    max-width: 500px;
+    line-height: 1.6;
+  }
+
+  /* MAIN LAYOUT */
+  .main { max-width: 860px; margin: 0 auto; padding: 2rem; }
+
+  /* CARDS */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-icon {
+    width: 28px; height: 28px;
+    background: var(--green-pale);
+    border: 1px solid var(--green-border);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: 0.01em; }
+
+  /* FORM ELEMENTS */
+  .field { margin-bottom: 1rem; }
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-mid);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  input[type=text], input[type=date], input[type=time], input[type=number], select, textarea {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.12);
+  }
+  textarea { resize: vertical; line-height: 1.6; min-height: 80px; }
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23718096' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid2-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+
+  /* TAG PILLS */
+  .tag-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    padding: 7px 16px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    border: 1.5px solid var(--border-mid);
+    border-radius: 20px;
+    cursor: pointer;
+    background: var(--white);
+    color: var(--text-mid);
+    transition: all 0.12s;
+    user-select: none;
+  }
+  .tag:hover { border-color: var(--green); color: var(--green-dark); }
+  .tag.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+  /* HINT TEXT */
+  .hint { font-size: 12px; color: var(--text-light); margin-top: 4px; line-height: 1.4; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 1rem 0; }
+
+  /* GENERATE BUTTON */
+  .btn-wrap { margin-top: 1.5rem; }
+  .btn-generate {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: -0.2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-generate:hover { background: var(--navy-mid); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(26,35,50,0.25); }
+  .btn-generate:active { transform: translateY(0); }
+  .btn-generate .btn-arrow { margin-left: 8px; color: var(--green); }
+
+  /* BRIEF OUTPUT */
+  .brief-wrap {
+    display: none;
+    margin-top: 2rem;
+  }
+  .brief-wrap.visible { display: block; }
+
+  .brief-doc {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .brief-header {
+    background: var(--navy);
+    padding: 2rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .brief-header-left h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+  .brief-header-left .brief-type {
+    display: inline-block;
+    background: var(--green);
+    color: var(--navy);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .brief-meta { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 12px; }
+  .brief-meta-item { font-size: 13px; color: rgba(255,255,255,0.6); }
+  .brief-meta-item strong { color: rgba(255,255,255,0.9); font-weight: 500; }
+
+  .brief-body { padding: 0; }
+
+  .brief-section {
+    padding: 1.25rem 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .brief-section:last-child { border-bottom: none; }
+
+  .brief-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--green-dark);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .brief-section-title::before {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 2px;
+    background: var(--green);
+    border-radius: 1px;
+  }
+
+  .brief-text { font-size: 14px; color: var(--text); line-height: 1.7; white-space: pre-wrap; }
+  .brief-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .brief-col-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+  }
+  .brief-col-box .col-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light); margin-bottom: 6px; }
+  .brief-col-box.push { border-left: 3px solid var(--green); }
+  .brief-col-box.avoid { border-left: 3px solid #ef4444; }
+
+  .andrew-box {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+  }
+  .andrew-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #92400e; margin-bottom: 6px; }
+  .andrew-text { font-size: 14px; color: #78350f; line-height: 1.6; }
+
+  .win-box {
+    background: var(--green-pale);
+    border: 1.5px solid var(--green-border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin: 0 2rem 1.5rem;
+  }
+  .win-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green-dark); margin-bottom: 6px; }
+  .win-text { font-size: 15px; font-weight: 500; color: var(--navy); line-height: 1.5; }
+
+  .objectives-list { list-style: none; }
+  .objectives-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .objectives-list li:last-child { border-bottom: none; }
+  .obj-num {
+    width: 22px; height: 22px; min-width: 22px;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 1px;
+  }
+
+  .attendees-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .att-group { }
+  .att-group-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light); margin-bottom: 6px; }
+  .att-list { font-size: 14px; color: var(--text); white-space: pre-wrap; line-height: 1.7; }
+
+  /* ACTIONS BAR */
+  .actions-bar {
+    display: flex;
+    gap: 10px;
+    padding: 1rem 2rem;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+  }
+  .btn-action {
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.12s;
+    border: 1px solid var(--border-mid);
+    background: var(--white);
+    color: var(--text);
+  }
+  .btn-action:hover { background: var(--bg); border-color: var(--navy); }
+  .btn-action.primary {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .btn-action.primary:hover { background: var(--navy-mid); }
+
+  /* PRINT */
+  @media print {
+    .topnav, .hero, .form-area, .actions-bar, .btn-wrap { display: none !important; }
+    .brief-wrap { display: block !important; }
+    body { background: white; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .grid2, .grid3, .grid2-3, .brief-cols, .attendees-cols { grid-template-columns: 1fr; }
+    .main { padding: 1rem; }
+    .hero { padding: 2rem 1rem 1.5rem; }
+    .brief-header { padding: 1.5rem; }
+    .brief-section { padding: 1rem 1.5rem; }
+    .win-box { margin: 0 1.5rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="logo" href="#">
+    <div class="logo-mark">
+      <div class="lm-row"><div class="lm-long"></div><div class="lm-short"></div></div>
+      <div class="lm-row"><div class="lm-short"></div><div class="lm-long"></div></div>
+      <div class="lm-row"><div class="lm-long"></div><div class="lm-short"></div></div>
+    </div>
+    <span class="logo-text">Enable</span>
+  </a>
+  <span class="nav-label">EBD Brief Generator</span>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <h1>EBD Brief <span>Generator</span></h1>
+    <p>Fill in the details below to generate a clean pre-meeting brief for Andrew — ready in seconds.</p>
+  </div>
+</div>
+
+<div class="main" id="formArea">
+
+  <!-- MEETING TYPE -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">📋</div>
+      <span class="card-title">Meeting type</span>
+    </div>
+    <div class="field">
+      <div class="tag-group" id="meetingType">
+        <div class="tag" onclick="toggleTag(this,'meetingType')">New business</div>
+        <div class="tag" onclick="toggleTag(this,'meetingType')">Expansion deal</div>
+        <div class="tag" onclick="toggleTag(this,'meetingType')">QBR</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEAL DETAILS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">💼</div>
+      <span class="card-title">Deal details</span>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Company name</label><input type="text" id="companyName" placeholder="e.g. Tropic Supply"></div>
+      <div class="field"><label>Deal value</label><input type="text" id="dealValue" placeholder="e.g. $271K"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Close date</label><input type="date" id="closeDate"></div>
+      <div class="field">
+        <label>Deal stage</label>
+        <select id="dealStage">
+          <option value="">Select a stage...</option>
+          <option>Stage 1 — Awareness</option>
+          <option>Stage 2 — Discovery</option>
+          <option>Stage 3 — Evaluation</option>
+          <option>Stage 4 — Decision</option>
+          <option>Stage 5 — Close</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEETING LOGISTICS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">📍</div>
+      <span class="card-title">Meeting logistics</span>
+    </div>
+    <div class="field">
+      <label>Meeting format</label>
+      <div class="tag-group" id="meetingFormat">
+        <div class="tag" onclick="toggleTag(this,'meetingFormat')">In-person</div>
+        <div class="tag" onclick="toggleTag(this,'meetingFormat')">Video call</div>
+        <div class="tag" onclick="toggleTag(this,'meetingFormat')">Phone</div>
+      </div>
+    </div>
+    <div class="grid3">
+      <div class="field"><label>Date</label><input type="date" id="meetingDate"></div>
+      <div class="field"><label>Time</label><input type="time" id="meetingTime"></div>
+      <div class="field">
+        <label>Timezone</label>
+        <select id="timezone">
+          <option value="">Select...</option>
+          <option>ET</option><option>CT</option><option>MT</option><option>PT</option>
+          <option>GMT</option><option>CET</option><option>AEST</option><option>NZT</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Location / platform</label><input type="text" id="location" placeholder="e.g. Zoom, client HQ address, Google Meet link"></div>
+  </div>
+
+  <!-- ATTENDEES -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">👥</div>
+      <span class="card-title">Attendees</span>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Enable team</label>
+        <textarea id="enableAttendees" rows="4" placeholder="Tyler Cogan, SAE&#10;Fay Gowani, Sales Director&#10;Jerry Brooner, President"></textarea>
+      </div>
+      <div class="field">
+        <label>Client contacts</label>
+        <textarea id="clientContacts" rows="4" placeholder="John Birdsall, CAO&#10;Chuck Del Vecchio, President"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPANY CONTEXT -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">🏢</div>
+      <span class="card-title">Company context</span>
+    </div>
+    <div class="field">
+      <label>Company snapshot</label>
+      <textarea id="companySnapshot" rows="3" placeholder="Industry, size, what they do, key background facts..."></textarea>
+    </div>
+    <div class="field">
+      <label>Pain points / compelling event</label>
+      <textarea id="painPoints" rows="3" placeholder="What's driving urgency? What problem are they trying to solve?"></textarea>
+    </div>
+    <div class="field">
+      <label>ROI / value summary</label>
+      <textarea id="roiSummary" rows="2" placeholder="e.g. 429% 5-yr ROI, $1.1M net benefit, saves 7.4 hrs/wk"></textarea>
+    </div>
+  </div>
+
+  <!-- ANDREW'S ROLE -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">⭐</div>
+      <span class="card-title">Andrew's role in this meeting</span>
+    </div>
+    <div class="field">
+      <label>What is Andrew doing?</label>
+      <textarea id="andrewRole" rows="3" placeholder="e.g. Running the product demo — covering data hosting, SOC2 compliance, and how the platform works. Will leave before pricing discussion begins."></textarea>
+    </div>
+  </div>
+
+  <!-- MESSAGING -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">💬</div>
+      <span class="card-title">Messaging strategy</span>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>What to push</label>
+        <textarea id="whatToPush" rows="4" placeholder="Key value messages, proof points, themes to emphasise..."></textarea>
+      </div>
+      <div class="field">
+        <label>What to avoid</label>
+        <textarea id="whatToAvoid" rows="4" placeholder="Topics, objections, or areas to steer clear of..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBJECTIVES -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">🎯</div>
+      <span class="card-title">Objectives & outcome</span>
+    </div>
+    <div class="field">
+      <label>Meeting objectives (one per line, max 3)</label>
+      <textarea id="objectives" rows="4" placeholder="Get full buy-in from executive sponsor&#10;Agree on contract terms&#10;Address data privacy concerns"></textarea>
+    </div>
+    <div class="field">
+      <label>Win condition</label>
+      <input type="text" id="winCondition" placeholder="e.g. Chuck signs the contract by end of meeting">
+      <p class="hint">The single clearest sign this meeting was a success.</p>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">📝</div>
+      <span class="card-title">Additional notes</span>
+    </div>
+    <div class="field">
+      <textarea id="additionalNotes" rows="3" placeholder="Anything else Andrew should know before walking in — tone, sensitivities, dress code, logistics, etc."></textarea>
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn-generate" onclick="generateBrief()">
+      Generate Andrew's brief <span class="btn-arrow">→</span>
+    </button>
+  </div>
+
+</div>
+
+<!-- BRIEF OUTPUT -->
+<div class="brief-wrap main" id="briefWrap">
+  <div class="brief-doc" id="briefDoc">
+    <!-- Populated by JS -->
+  </div>
+
+  <div style="margin-top: 1rem; padding: 1rem 1.5rem; background: var(--green-pale); border: 1px solid var(--green-border); border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <span style="font-size: 14px; color: var(--green-dark); font-weight: 500;">📄 Want this as a formatted Word doc with the Enable logo?</span>
+    <button class="btn-action primary" onclick="copyBriefText()">Copy brief text</button>
+  </div>
+</div>
+
+<script>
+function toggleTag(el, groupId) {
+  document.querySelectorAll('#' + groupId + ' .tag').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function activeTag(groupId) {
+  const el = document.querySelector('#' + groupId + ' .tag.active');
+  return el ? el.textContent.trim() : '';
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function formatTime(timeStr) {
+  if (!timeStr) return null;
+  const [h, m] = timeStr.split(':');
+  const hour = parseInt(h);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const h12 = hour % 12 || 12;
+  return h12 + ':' + m + ' ' + ampm;
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function generateBrief() {
+  const company = val('companyName') || 'Company TBD';
+  const meetingType = activeTag('meetingType') || 'Meeting';
+  const dealValue = val('dealValue');
+  const closeDate = val('closeDate');
+  const dealStage = val('dealStage');
+  const format = activeTag('meetingFormat');
+  const location = val('location');
+  const mDate = val('meetingDate');
+  const mTime = val('meetingTime');
+  const tz = val('timezone');
+  const enableAttendees = val('enableAttendees');
+  const clientContacts = val('clientContacts');
+  const snapshot = val('companySnapshot');
+  const painPoints = val('painPoints');
+  const roi = val('roiSummary');
+  const andrewRole = val('andrewRole');
+  const push = val('whatToPush');
+  const avoid = val('whatToAvoid');
+  const objectives = val('objectives');
+  const winCondition = val('winCondition');
+  const notes = val('additionalNotes');
+
+  const dateDisplay = formatDate(mDate);
+  const timeDisplay = formatTime(mTime);
+  const closeDateDisplay = formatDate(closeDate);
+
+  let metaItems = [];
+  if (dateDisplay) metaItems.push({ label: 'Date', val: dateDisplay });
+  if (timeDisplay) metaItems.push({ label: 'Time', val: timeDisplay + (tz ? ' ' + tz : '') });
+  if (format) metaItems.push({ label: 'Format', val: format });
+  if (location) metaItems.push({ label: 'Location', val: location });
+  if (dealValue) metaItems.push({ label: 'Deal value', val: dealValue });
+  if (dealStage) metaItems.push({ label: 'Stage', val: dealStage });
+  if (closeDateDisplay) metaItems.push({ label: 'Close date', val: closeDateDisplay });
+
+  const objLines = objectives.split('\n').filter(l => l.trim());
+
+  let html = `
+  <div class="brief-header">
+    <div class="brief-header-left">
+      <div class="brief-type">${escHtml(meetingType)}</div>
+      <h2>${escHtml(company)}</h2>
+      <div class="brief-meta">
+        ${metaItems.map(m => `<div class="brief-meta-item"><strong>${escHtml(m.label)}:</strong> ${escHtml(m.val)}</div>`).join('')}
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
+        <div class="lm-row" style="display:flex;gap:3px;"><div style="width:18px;height:4px;background:#22c55e;border-radius:2px;"></div><div style="width:4px;height:4px;background:#16a34a;border-radius:1px;"></div></div>
+        <div class="lm-row" style="display:flex;gap:3px;"><div style="width:4px;height:4px;background:#16a34a;border-radius:1px;"></div><div style="width:18px;height:4px;background:#22c55e;border-radius:2px;"></div></div>
+        <div class="lm-row" style="display:flex;gap:3px;"><div style="width:18px;height:4px;background:#22c55e;border-radius:2px;"></div><div style="width:4px;height:4px;background:#16a34a;border-radius:1px;"></div></div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:6px;font-family:'DM Mono',monospace;">Enable</div>
+    </div>
+  </div>
+
+  <div class="brief-body">`;
+
+  if (enableAttendees || clientContacts) {
+    html += `<div class="brief-section">
+      <div class="brief-section-title">Attendees</div>
+      <div class="attendees-cols">
+        <div><div class="att-group-label">Enable team</div><div class="att-list">${escHtml(enableAttendees || '—')}</div></div>
+        <div><div class="att-group-label">Client contacts</div><div class="att-list">${escHtml(clientContacts || '—')}</div></div>
+      </div>
+    </div>`;
+  }
+
+  if (snapshot || painPoints || roi) {
+    html += `<div class="brief-section">
+      <div class="brief-section-title">Company context</div>`;
+    if (snapshot) html += `<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#718096;margin-bottom:4px;">Snapshot</div><div class="brief-text">${escHtml(snapshot)}</div></div>`;
+    if (painPoints) html += `<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#718096;margin-bottom:4px;">Pain points</div><div class="brief-text">${escHtml(painPoints)}</div></div>`;
+    if (roi) html += `<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#718096;margin-bottom:4px;">ROI / value</div><div class="brief-text">${escHtml(roi)}</div></div>`;
+    html += `</div>`;
+  }
+
+  if (andrewRole) {
+    html += `<div class="brief-section">
+      <div class="brief-section-title">Andrew's role</div>
+      <div class="andrew-box">
+        <div class="andrew-label">What Andrew is doing in this meeting</div>
+        <div class="andrew-text">${escHtml(andrewRole)}</div>
+      </div>
+    </div>`;
+  }
+
+  if (push || avoid) {
+    html += `<div class="brief-section">
+      <div class="brief-section-title">Messaging strategy</div>
+      <div class="brief-cols">
+        <div class="brief-col-box push"><div class="col-label">✓ Push</div><div class="brief-text">${escHtml(push || '—')}</div></div>
+        <div class="brief-col-box avoid"><div class="col-label">✕ Avoid</div><div class="brief-text">${escHtml(avoid || '—')}</div></div>
+      </div>
+    </div>`;
+  }
+
+  if (objLines.length > 0) {
+    html += `<div class="brief-section">
+      <div class="brief-section-title">Meeting objectives</div>
+      <ul class="objectives-list">
+        ${objLines.slice(0,3).map((line, i) => {
+          const clean = line.replace(/^\d+[\.\)]\s*/, '');
+          return `<li><div class="obj-num">${i+1}</div><span>${escHtml(clean)}</span></li>`;
+        }).join('')}
+      </ul>
+    </div>`;
+  }
+
+  if (notes) {
+    html += `<div class="brief-section">
+      <div class="brief-section-title">Additional notes</div>
+      <div class="brief-text">${escHtml(notes)}</div>
+    </div>`;
+  }
+
+  html += `</div>`;
+
+  if (winCondition) {
+    html += `<div class="win-box">
+      <div class="win-label">🏆 Win condition</div>
+      <div class="win-text">${escHtml(winCondition)}</div>
+    </div>`;
+  }
+
+  document.getElementById('briefDoc').innerHTML = html;
+
+  const briefWrap = document.getElementById('briefWrap');
+  briefWrap.classList.add('visible');
+  briefWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyBriefText() {
+  const doc = document.getElementById('briefDoc');
+  const text = doc ? doc.innerText : '';
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+</script>
+</body>
+</html>
