@@ -714,9 +714,9 @@ body {
       <div class="form-grid">
         <section class="sec">
           <h2 class="sec-label">LinkedIn / contact intelligence lookup</h2>
-          <p class="helper-text">Enter client contact names and titles below, one per line. Claude will research each person's background, priorities and talking points to help Andrew prepare.</p>
+          <p class="helper-text">Enter contact names and titles below, one per line. Click Search to open their LinkedIn profile directly in a new tab.</p>
           <div class="f mt-10"><label for="li-input">Contact names &amp; titles (one per line)</label><textarea id="li-input" style="min-height:100px" placeholder="John Birdsall, Chief Accounting Officer, Tropic Supply&#10;Chuck Del Vecchio, President, Tropic Supply"></textarea></div>
-          <button class="btn-primary mt-10" onclick="lookupLinkedIn()">Research contacts →</button>
+          <button class="btn-primary mt-10" onclick="lookupLinkedIn()">Search on LinkedIn →</button>
         </section>
         <div id="li-results"></div>
       </div>
@@ -1095,50 +1095,28 @@ function lookupLinkedIn() {
   container.innerHTML = contacts.map(c => {
     const name = c.split(',')[0].trim();
     const rest = c.split(',').slice(1).join(',').trim();
-    const id   = 'li-' + btoa(encodeURIComponent(c)).replace(/[^a-zA-Z0-9]/g, '').slice(0, 16);
+    const query = encodeURIComponent(c);
+    const liUrl = `https://www.linkedin.com/search/results/people/?keywords=${query}`;
     return `
-      <div class="li-card" id="${id}">
+      <div class="li-card">
         <div class="li-card-header">
           <div class="li-avatar">${initials(name)}</div>
-          <div>
+          <div style="flex:1">
             <div class="li-name">${name}</div>
             <div class="li-title">${rest}</div>
           </div>
-        </div>
-        <div class="li-card-body">
-          <div class="li-loading">Researching profile...</div>
+          <a href="${liUrl}" target="_blank" rel="noopener noreferrer" style="
+            display:inline-flex;align-items:center;gap:6px;
+            padding:7px 14px;background:#0a66c2;color:#fff;
+            border-radius:6px;font-size:12px;font-weight:500;
+            text-decoration:none;white-space:nowrap;flex-shrink:0;
+          ">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            View on LinkedIn
+          </a>
         </div>
       </div>`;
   }).join('');
-
-  // Fire into Claude chat via the prompt interface
-  const prompt = buildLinkedInPrompt(contacts);
-  if (typeof sendPrompt === 'function') {
-    sendPrompt(prompt);
-  } else {
-    // Standalone mode — show placeholder
-    contacts.forEach(c => {
-      const name = c.split(',')[0].trim();
-      const rest = c.split(',').slice(1).join(',').trim();
-      const id   = 'li-' + btoa(encodeURIComponent(c)).replace(/[^a-zA-Z0-9]/g, '').slice(0, 16);
-      const body = document.querySelector(`#${id} .li-card-body`);
-      if (body) body.innerHTML = `<p style="font-size:13px;color:var(--text-muted)">In the Claude interface, this will trigger an AI-powered research brief for <strong>${name}</strong>.</p>`;
-    });
-  }
-}
-
-function buildLinkedInPrompt(contacts) {
-  return `For each of the following client contacts, provide a concise professional intelligence brief to help a sales rep (Andrew) prepare. For each person include:
-- Career background and current role tenure
-- What drives someone in their role
-- Priorities or concerns about a rebate management software purchase
-- Any known public information
-- 2–3 personalised talking points for Andrew
-
-Format each person as a clear, distinct card/section.
-
-Contacts:
-${contacts.join('\n')}`;
 }
 
 /* ---- Init ---- */
