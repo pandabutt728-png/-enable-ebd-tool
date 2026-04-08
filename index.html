@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EBD Brief Generator — Enable</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app" id="app">
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <img src="assets/logo.png" alt="Enable" class="logo" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex'" />
+        <div id="logo-fallback" class="logo-fallback" style="display:none">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <rect width="26" height="26" rx="5" fill="#1a2e3d"/>
+            <rect x="4" y="6" width="12" height="3" rx="1.5" fill="#00d97e"/>
+            <rect x="4" y="11.5" width="17" height="3" rx="1.5" fill="#00d97e"/>
+            <rect x="4" y="17" width="12" height="3" rx="1.5" fill="#00d97e"/>
+            <rect x="18" y="6" width="3" height="3" rx="1" fill="#1a6640"/>
+            <rect x="18" y="17" width="3" height="3" rx="1" fill="#1a6640"/>
+          </svg>
+          <span class="logo-text">Enable</span>
+        </div>
+        <h1 class="app-title">EBD Brief Generator</h1>
+        <span class="autosave-badge" id="save-badge"></span>
+      </div>
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="form" onclick="switchTab('form')" role="tab">New brief</button>
+        <button class="tab" data-tab="history" onclick="switchTab('history')" role="tab">History <span id="hist-count"></span></button>
+      </nav>
+    </header>
+
+    <!-- FORM TAB -->
+    <div id="view-form" class="view active">
+      <div class="form-grid">
+
+        <section class="sec">
+          <h2 class="sec-label">Meeting type</h2>
+          <div class="tags" id="mt-tags">
+            <button class="tag" data-g="mt" onclick="tog(this)">New business</button>
+            <button class="tag" data-g="mt" onclick="tog(this)">Expansion deal</button>
+            <button class="tag" data-g="mt" onclick="tog(this)">QBR</button>
+          </div>
+        </section>
+
+        <section class="sec">
+          <h2 class="sec-label">Meeting details</h2>
+          <div class="g2 mb-10">
+            <div class="f">
+              <label for="f-company">Company name</label>
+              <input id="f-company" type="text" placeholder="e.g. Acme Distribution Co." oninput="debounceSave()" />
+            </div>
+            <div class="f">
+              <label>Meeting format</label>
+              <div class="tags" id="fmt-tags">
+                <button class="tag" data-g="fmt" onclick="tog(this)">In-person</button>
+                <button class="tag" data-g="fmt" onclick="tog(this)">Video call</button>
+                <button class="tag" data-g="fmt" onclick="tog(this)">Phone</button>
+              </div>
+            </div>
+          </div>
+          <div class="g4 mb-10">
+            <div class="f"><label for="f-date">Date</label><input id="f-date" type="date" oninput="debounceSave()" /></div>
+            <div class="f"><label for="f-time">Time</label><input id="f-time" type="time" oninput="debounceSave()" /></div>
+            <div class="f">
+              <label for="f-tz">Timezone</label>
+              <select id="f-tz" onchange="debounceSave()">
+                <option value="">—</option>
+                <option>ET</option><option>CT</option><option>MT</option><option>PT</option>
+                <option>GMT</option><option>CET</option><option>AEST</option><option>NZT</option>
+              </select>
+            </div>
+            <div class="f"><label for="f-loc">Location / platform</label><input id="f-loc" type="text" placeholder="Zoom, HQ..." oninput="debounceSave()" /></div>
+          </div>
+          <div class="g3">
+            <div class="f"><label for="f-value">Deal value (USD)</label><input id="f-value" type="text" placeholder="e.g. $271K" oninput="debounceSave()" /></div>
+            <div class="f"><label for="f-close">Close date</label><input id="f-close" type="date" oninput="debounceSave()" /></div>
+            <div class="f">
+              <label for="f-stage">Deal stage</label>
+              <select id="f-stage" onchange="debounceSave()">
+                <option value="">—</option>
+                <option>Stage 1 — Prospect</option>
+                <option>Stage 2 — Discovery</option>
+                <option>Stage 3 — Evaluation</option>
+                <option>Stage 4 — Proposal</option>
+                <option>Stage 5 — Close</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="sec">
+          <h2 class="sec-label">Attendees</h2>
+          <div class="g2">
+            <div class="f"><label for="f-enable">Enable team (names &amp; titles)</label><textarea id="f-enable" placeholder="Tyler Cogan, SAE&#10;Fay Gowani, Sales Director" oninput="debounceSave()"></textarea></div>
+            <div class="f">
+              <label for="f-client">Client contacts (names &amp; titles)</label>
+              <textarea id="f-client" placeholder="John Smith, CAO&#10;Jane Doe, President" oninput="debounceSave(); renderClientLinkedInLinks()"></textarea>
+              <div id="client-linkedin-links" class="client-li-links"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="sec">
+          <h2 class="sec-label">Company context</h2>
+          <div class="f mb-10"><label for="f-snapshot">Company snapshot</label><textarea id="f-snapshot" placeholder="Who they are, what they do, revenue, industry..." oninput="debounceSave()"></textarea></div>
+          <div class="g2">
+            <div class="f"><label for="f-pain">Pain points / compelling events</label><textarea id="f-pain" placeholder="e.g. Manually tracking 100 programs in Excel..." oninput="debounceSave()"></textarea></div>
+            <div class="f"><label for="f-roi">ROI / value summary</label><textarea id="f-roi" placeholder="e.g. 429% 5-yr ROI, $1.1M net benefit..." oninput="debounceSave()"></textarea></div>
+          </div>
+        </section>
+
+        <section class="sec">
+          <h2 class="sec-label sec-label--green">Andrew's role in this meeting</h2>
+          <div class="andrew-box">
+            <textarea id="f-andrew" class="andrew-textarea" placeholder="e.g. Andrew demos the rebate workflow, addresses SOC2/data hosting questions, then leaves before commercial negotiation..." oninput="debounceSave()"></textarea>
+          </div>
+        </section>
+
+        <section class="sec">
+          <h2 class="sec-label">Messaging strategy</h2>
+          <div class="g2">
+            <div class="f"><label for="f-push">What to push</label><textarea id="f-push" placeholder="ROI impact, rebate automation, competitive edge..." oninput="debounceSave()"></textarea></div>
+            <div class="f"><label for="f-avoid">What to avoid</label><textarea id="f-avoid" placeholder="Negotiating price — terms already agreed with John..." oninput="debounceSave()"></textarea></div>
+          </div>
+        </section>
+
+        <section class="sec">
+          <h2 class="sec-label">Objectives &amp; outcome</h2>
+          <div class="f mb-10"><label for="f-obj">Meeting objectives (one per line, max 3)</label><textarea id="f-obj" placeholder="1. Get exec buy-in from CEO&#10;2. Confirm contract terms" oninput="debounceSave()"></textarea></div>
+          <div class="f"><label for="f-win">Win condition</label><input id="f-win" type="text" placeholder="e.g. Chuck signs contract before end of April" oninput="debounceSave()" /></div>
+        </section>
+
+        <section class="sec">
+          <h2 class="sec-label">Additional notes</h2>
+          <div class="f"><textarea id="f-notes" placeholder="Logistics, reminders, talking points..." oninput="debounceSave()"></textarea></div>
+        </section>
+
+        <div class="actions-row">
+          <button class="btn-secondary" onclick="clearForm()">Clear form</button>
+          <button class="btn-primary" onclick="generateBrief()">Generate Andrew's brief →</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- HISTORY TAB -->
+    <div id="view-history" class="view">
+      <div class="form-grid">
+        <div class="history-header">
+          <span class="helper-text" id="hist-label">Saved briefs</span>
+          <button class="btn-secondary btn-sm" onclick="clearHistory()">Clear all</button>
+        </div>
+        <div id="hist-list"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BRIEF MODAL -->
+  <div id="brief-modal" class="modal-backdrop" style="display:none" onclick="closeBriefModal(event)">
+    <div class="modal-box" id="brief-box">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <svg width="22" height="22" viewBox="0 0 26 26" fill="none">
+            <rect width="26" height="26" rx="5" fill="#1a2e3d"/>
+            <rect x="4" y="6" width="12" height="3" rx="1.5" fill="#00d97e"/>
+            <rect x="4" y="11.5" width="17" height="3" rx="1.5" fill="#00d97e"/>
+            <rect x="4" y="17" width="12" height="3" rx="1.5" fill="#00d97e"/>
+            <rect x="18" y="6" width="3" height="3" rx="1" fill="#1a6640"/>
+            <rect x="18" y="17" width="3" height="3" rx="1" fill="#1a6640"/>
+          </svg>
+          <span>Meeting Brief</span>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-secondary btn-sm" onclick="printBrief()">Print / Save PDF</button>
+          <button class="btn-secondary btn-sm" onclick="closeBriefModal()">✕ Close</button>
+        </div>
+      </div>
+      <div class="modal-body" id="brief-content"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
