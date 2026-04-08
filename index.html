@@ -8,7 +8,7 @@
   <style>
 /* ============================================================
    EBD Brief Generator — Enable
-   styles.css (inlined)
+   styles.css
    ============================================================ */
 
 :root {
@@ -45,7 +45,9 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 html { font-size: 16px; }
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   background: var(--surface-alt);
@@ -54,6 +56,7 @@ body {
   line-height: 1.5;
 }
 
+/* ---- Topbar ---- */
 .topbar {
   background: var(--navy);
   padding: 0 24px;
@@ -66,45 +69,110 @@ body {
   z-index: 100;
   box-shadow: 0 1px 0 rgba(255,255,255,0.06);
 }
-.topbar-left { display: flex; align-items: center; gap: 12px; }
-.logo { height: 28px; width: auto; }
-.logo-fallback { display: flex; align-items: center; gap: 8px; }
-.logo-text { font-size: 16px; font-weight: 600; color: #ffffff; letter-spacing: -0.01em; }
-.app-title { font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.85); letter-spacing: -0.01em; }
-.autosave-badge {
-  font-size: 11px; color: #00d97e; opacity: 0; transition: opacity 0.3s;
-  padding: 2px 8px; background: rgba(0,217,126,0.1); border-radius: 10px;
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
+
+.logo { height: 28px; width: auto; }
+
+.logo-fallback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.app-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: -0.01em;
+}
+
+.autosave-badge {
+  font-size: 11px;
+  color: #00d97e;
+  opacity: 0;
+  transition: opacity 0.3s;
+  padding: 2px 8px;
+  background: rgba(0,217,126,0.1);
+  border-radius: 10px;
+}
+
 .autosave-badge.visible { opacity: 1; }
 
-.tabs { display: flex; gap: 2px; background: rgba(255,255,255,0.06); border-radius: var(--radius); padding: 3px; }
-.tab {
-  padding: 5px 14px; border-radius: 6px; font-size: 12px; font-weight: 500;
-  cursor: pointer; border: none; background: transparent; color: rgba(255,255,255,0.55);
-  transition: all 0.15s; font-family: inherit;
+/* ---- Tabs ---- */
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: rgba(255,255,255,0.06);
+  border-radius: var(--radius);
+  padding: 3px;
 }
+
+.tab {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.55);
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
 .tab:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.08); }
 .tab.active { background: rgba(255,255,255,0.14); color: #ffffff; }
 
+/* ---- App body ---- */
 .app { min-height: 100vh; }
+
 .view { display: none; }
 .view.active { display: block; }
+
 .form-grid {
-  max-width: 860px; margin: 0 auto; padding: 28px 24px 60px;
-  display: flex; flex-direction: column; gap: 20px;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
+/* ---- Sections ---- */
 .sec {
-  background: var(--surface); border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg); padding: 20px 22px; box-shadow: var(--shadow-sm);
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
 }
+
 .sec-label {
-  font-size: 11px; font-weight: 600; color: var(--text-muted);
-  text-transform: uppercase; letter-spacing: 0.07em;
-  margin-bottom: 12px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 0.5px solid var(--border);
 }
+
 .sec-label--green { color: var(--green); border-bottom-color: var(--green-light); }
 
+/* ---- Grid helpers ---- */
 .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
 .g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
@@ -115,180 +183,428 @@ body {
   .g2, .g3, .g4 { grid-template-columns: 1fr; }
 }
 
-.f { display: flex; flex-direction: column; gap: 5px; }
-.f label { font-size: 12px; font-weight: 500; color: var(--text-muted); }
-.f input, .f select, .f textarea {
-  font-family: inherit; font-size: 13px; color: var(--text);
-  background: var(--surface-alt); border: 0.5px solid var(--border-med);
-  border-radius: var(--radius); padding: 8px 10px; width: 100%;
-  outline: none; transition: border-color 0.15s, box-shadow 0.15s; line-height: 1.5;
+/* ---- Form elements ---- */
+.f {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
-.f input:focus, .f select:focus, .f textarea:focus {
-  border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,122,58,0.1);
-}
-.f textarea { resize: vertical; min-height: 72px; }
 
-.tags { display: flex; gap: 7px; flex-wrap: wrap; }
-.tag {
-  padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
-  cursor: pointer; border: 0.5px solid var(--border-med); background: var(--surface-alt);
-  color: var(--text-muted); transition: all 0.12s; font-family: inherit;
+.f label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
 }
+
+.f input,
+.f select,
+.f textarea {
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface-alt);
+  border: 0.5px solid var(--border-med);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  line-height: 1.5;
+}
+
+.f input:focus,
+.f select:focus,
+.f textarea:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(45,122,58,0.1);
+}
+
+.f textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+/* ---- Tags ---- */
+.tags { display: flex; gap: 7px; flex-wrap: wrap; }
+
+.tag {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 0.5px solid var(--border-med);
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  transition: all 0.12s;
+  font-family: inherit;
+}
+
 .tag:hover { border-color: var(--green); color: var(--green); }
 .tag.on { background: var(--navy); color: #fff; border-color: var(--navy); }
 
+/* ---- Andrew's box ---- */
 .andrew-box {
-  background: var(--green-light); border-radius: 0 var(--radius) var(--radius) 0;
-  padding: 12px 14px; border-left: 3px solid var(--green);
-}
-.andrew-textarea {
-  border: none !important; background: transparent !important;
-  padding: 0 !important; box-shadow: none !important;
-  font-size: 13px; color: var(--text); width: 100%;
-  resize: vertical; min-height: 60px; outline: none;
-  font-family: inherit; line-height: 1.6;
+  background: var(--green-light);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--green);
 }
 
-.btn-primary {
-  padding: 10px 22px; background: var(--navy); color: #fff; border: none;
-  border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer;
-  font-family: inherit; transition: background 0.15s, transform 0.1s; letter-spacing: -0.01em;
+.andrew-textarea {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  font-size: 13px;
+  color: var(--text);
+  width: 100%;
+  resize: vertical;
+  min-height: 60px;
+  outline: none;
+  font-family: inherit;
+  line-height: 1.6;
 }
+
+/* ---- Buttons ---- */
+.btn-primary {
+  padding: 10px 22px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, transform 0.1s;
+  letter-spacing: -0.01em;
+}
+
 .btn-primary:hover { background: var(--navy-light); }
 .btn-primary:active { transform: scale(0.98); }
+
 .btn-secondary {
-  padding: 8px 16px; background: transparent; color: var(--text-muted);
-  border: 0.5px solid var(--border-med); border-radius: var(--radius);
-  font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.12s;
+  padding: 8px 16px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 0.5px solid var(--border-med);
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.12s;
 }
+
 .btn-secondary:hover { background: var(--surface-alt); color: var(--text); }
 .btn-sm { padding: 5px 12px; font-size: 11px; }
+
 .actions-row {
-  display: flex; justify-content: flex-end; gap: 10px;
-  align-items: center; padding-top: 4px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  align-items: center;
+  padding-top: 4px;
 }
 
-.helper-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+/* ---- Helper text ---- */
+.helper-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
 
-.history-header { display: flex; align-items: center; justify-content: space-between; }
+/* ---- History ---- */
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .hist-item {
-  background: var(--surface); border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg); padding: 16px 18px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
   transition: border-color 0.12s, box-shadow 0.12s;
 }
-.hist-item:hover { border-color: var(--border-med); box-shadow: var(--shadow-sm); }
-.hist-top { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
-.hist-badge {
-  padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: 500;
-  background: var(--green-light); color: var(--green-text);
-}
-.hist-company { font-size: 14px; font-weight: 500; color: var(--text); }
-.hist-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 2px; }
-.hist-actions { display: flex; gap: 7px; margin-top: 12px; flex-wrap: wrap; }
-.history-empty {
-  text-align: center; padding: 3rem 1rem; color: var(--text-muted);
-  font-size: 13px; line-height: 1.8;
+
+.hist-item:hover {
+  border-color: var(--border-med);
+  box-shadow: var(--shadow-sm);
 }
 
+.hist-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.hist-badge {
+  padding: 2px 9px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--green-light);
+  color: var(--green-text);
+}
+
+.hist-company {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.hist-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.hist-actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.history-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* ---- LinkedIn cards ---- */
 .li-card {
-  background: var(--surface); border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 14px; box-shadow: var(--shadow-sm);
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
 }
-.li-card-header { background: var(--navy); padding: 16px 18px; display: flex; align-items: center; gap: 12px; }
+
+.li-card-header {
+  background: var(--navy);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .li-avatar {
-  width: 44px; height: 44px; border-radius: 50%; background: var(--green);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 600; color: #fff; flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  flex-shrink: 0;
 }
+
 .li-name { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: 2px; }
 .li-title { font-size: 12px; color: rgba(255,255,255,0.6); }
+
 .li-card-body { padding: 16px 18px; }
 .li-loading { font-size: 13px; color: var(--text-muted); padding: 8px 0; }
 
+/* ---- Brief Modal ---- */
 .modal-backdrop {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000;
-  display: flex; align-items: flex-start; justify-content: center;
-  padding: 24px; overflow-y: auto;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
 }
+
 .modal-box {
-  background: var(--surface); border-radius: var(--radius-lg);
-  width: 100%; max-width: 760px; box-shadow: var(--shadow-md); overflow: hidden;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 760px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
 }
+
 .modal-header {
-  background: var(--navy); padding: 14px 20px;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--navy);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
-.modal-header-left { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: #fff; }
+
+.modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+}
+
 .modal-actions { display: flex; gap: 8px; }
+
 .modal-body { padding: 28px 28px 36px; }
 
+/* ---- Brief content styles ---- */
 .brief-header-block {
-  background: var(--navy); color: #fff; border-radius: var(--radius-lg);
-  padding: 20px 22px; margin-bottom: 20px;
+  background: var(--navy);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  margin-bottom: 20px;
 }
-.brief-company { font-size: 22px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.02em; }
+
+.brief-company {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+
 .brief-meeting-type {
-  display: inline-block; padding: 3px 10px; border-radius: 10px;
-  font-size: 11px; font-weight: 500; background: var(--green); color: #fff; margin-bottom: 14px;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--green);
+  color: #fff;
+  margin-bottom: 14px;
 }
+
 .brief-meta-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px; margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
 }
+
+.brief-meta-item { }
 .brief-meta-label { font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
 .brief-meta-value { font-size: 13px; color: rgba(255,255,255,0.9); font-weight: 500; }
+
 .brief-section { margin-bottom: 22px; }
+
 .brief-section-title {
-  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;
-  color: var(--text-muted); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 0.5px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 0.5px solid var(--border);
 }
+
 .brief-section-title.green { color: var(--green); border-color: var(--green-light); }
+
 .brief-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.brief-col-card { background: var(--surface-alt); border-radius: var(--radius); padding: 12px 14px; }
+
+.brief-col-card {
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+
 .brief-col-card-title { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
 .brief-col-card-title.push { color: #166534; }
 .brief-col-card-title.avoid { color: #9a3412; }
+
 .brief-col-card ul { padding-left: 16px; }
 .brief-col-card li { font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 4px; }
+
 .brief-attendees { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.brief-attendee-group { }
 .brief-attendee-label { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
 .brief-attendee-item { font-size: 13px; color: var(--text); line-height: 1.6; display: flex; align-items: center; gap: 2px; }
 .brief-attendee-title { color: var(--text-muted); }
-.brief-linkedin-link {
-  color: #0a66c2; display: inline-flex; align-items: center; margin-left: 4px;
-  opacity: 0.7; transition: opacity 0.15s; flex-shrink: 0;
-}
+.brief-linkedin-link { color: #0a66c2; display: inline-flex; align-items: center; margin-left: 4px; opacity: 0.7; transition: opacity 0.15s; flex-shrink: 0; }
 .brief-linkedin-link:hover { opacity: 1; }
+
 .brief-andrew-box {
-  background: var(--green-light); border-left: 3px solid var(--green);
-  border-radius: 0 var(--radius) var(--radius) 0; padding: 14px 16px;
+  background: var(--green-light);
+  border-left: 3px solid var(--green);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 14px 16px;
 }
+
 .brief-andrew-box p { font-size: 13px; color: var(--text); line-height: 1.7; }
+
 .brief-objectives { padding-left: 0; list-style: none; }
 .brief-objectives li {
-  display: flex; gap: 12px; align-items: flex-start;
-  font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 8px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+  margin-bottom: 8px;
 }
+
 .brief-obj-num {
-  width: 22px; height: 22px; border-radius: 50%; background: var(--navy); color: #fff;
-  font-size: 11px; font-weight: 600; display: flex; align-items: center;
-  justify-content: center; flex-shrink: 0; margin-top: 1px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
 }
+
 .brief-win-box {
-  background: var(--green-light); border: 1.5px solid var(--green);
-  border-radius: var(--radius-lg); padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px;
+  background: var(--green-light);
+  border: 1.5px solid var(--green);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
 }
+
 .brief-win-icon {
-  width: 28px; height: 28px; border-radius: 50%; background: var(--green);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
+
 .brief-win-icon svg { width: 14px; height: 14px; }
 .brief-win-label { font-size: 11px; font-weight: 600; color: var(--green-text); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
 .brief-win-text { font-size: 14px; font-weight: 500; color: var(--green-text); line-height: 1.5; }
+
 .brief-body-text { font-size: 13px; color: var(--text); line-height: 1.7; }
+
 .brief-footer {
-  margin-top: 28px; padding-top: 16px; border-top: 0.5px solid var(--border);
-  text-align: center; font-size: 11px; color: var(--text-hint);
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--border);
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-hint);
 }
 
 @media print {
@@ -297,7 +613,8 @@ body {
   .modal-box { box-shadow: none; max-width: none; }
   .modal-body { padding: 0; }
 }
-  </style>
+
+</style>
 </head>
 <body>
   <div class="app" id="app">
@@ -388,8 +705,8 @@ body {
         <section class="sec">
           <h2 class="sec-label">Attendees</h2>
           <div class="g2">
-            <div class="f"><label for="f-enable">Enable team (names, titles &amp; optional LinkedIn)</label><textarea id="f-enable" placeholder="Tyler Cogan, SAE&#10;Fay Gowani, Sales Director, https://linkedin.com/in/fgowani" oninput="debounceSave()"></textarea></div>
-            <div class="f"><label for="f-client">Client contacts (names, titles &amp; optional LinkedIn)</label><textarea id="f-client" placeholder="John Smith, CAO, https://linkedin.com/in/jsmith&#10;Jane Doe, President" oninput="debounceSave()"></textarea></div>
+            <div class="f"><label for="f-enable">Enable team (names &amp; titles)</label><textarea id="f-enable" placeholder="Tyler Cogan, SAE&#10;Fay Gowani, Sales Director" oninput="debounceSave()"></textarea></div>
+            <div class="f"><label for="f-client">Client contacts (names &amp; titles)</label><textarea id="f-client" placeholder="John Smith, CAO&#10;Jane Doe, President" oninput="debounceSave()"></textarea></div>
           </div>
         </section>
 
@@ -430,7 +747,7 @@ body {
 
         <div class="actions-row">
           <button class="btn-secondary" onclick="clearForm()">Clear form</button>
-          <button class="btn-primary" onclick="generateBrief()">Generate Andrew's brief &rarr;</button>
+          <button class="btn-primary" onclick="generateBrief()">Generate Andrew's brief →</button>
         </div>
 
       </div>
@@ -446,7 +763,7 @@ body {
             <label for="li-input">Contact names &amp; titles (one per line)</label>
             <textarea id="li-input" style="min-height:100px" placeholder="John Birdsall, Chief Accounting Officer, Tropic Supply&#10;Chuck Del Vecchio, President, Tropic Supply"></textarea>
           </div>
-          <button class="btn-primary mt-10" onclick="lookupLinkedIn()">Research contacts &rarr;</button>
+          <button class="btn-primary mt-10" onclick="lookupLinkedIn()">Research contacts →</button>
         </section>
         <div id="li-results"></div>
       </div>
@@ -482,7 +799,7 @@ body {
         </div>
         <div class="modal-actions">
           <button class="btn-secondary btn-sm" onclick="printBrief()">Print / Save PDF</button>
-          <button class="btn-secondary btn-sm" onclick="closeBriefModal()">&#x2715; Close</button>
+          <button class="btn-secondary btn-sm" onclick="closeBriefModal()">✕ Close</button>
         </div>
       </div>
       <div class="modal-body" id="brief-content"></div>
@@ -492,7 +809,7 @@ body {
   <script>
 /* ============================================================
    EBD Brief Generator — Enable
-   app.js (inlined)
+   app.js
    ============================================================ */
 
 const STORAGE_KEY = 'ebd_draft_v2';
@@ -501,43 +818,48 @@ const HIST_KEY    = 'ebd_history_v2';
 let saveTimer = null;
 let currentBriefData = null;
 
+/* ---- Tab switching ---- */
 function switchTab(t) {
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-  document.querySelector('.tab[data-tab="' + t + '"]').classList.add('active');
+  document.querySelector(`.tab[data-tab="${t}"]`).classList.add('active');
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + t).classList.add('active');
   if (t === 'history') renderHistory();
 }
 
+/* ---- Tag toggle ---- */
 function tog(el) {
   const g = el.dataset.g;
-  document.querySelectorAll('[data-g="' + g + '"]').forEach(e => e.classList.remove('on'));
+  document.querySelectorAll(`[data-g="${g}"]`).forEach(e => e.classList.remove('on'));
   el.classList.add('on');
   debounceSave();
 }
 
 function activeTag(g) {
-  const el = document.querySelector('[data-g="' + g + '"].on');
+  const el = document.querySelector(`[data-g="${g}"].on`);
   return el ? el.textContent.trim() : '';
 }
 
+/* ---- Field helpers ---- */
 function gv(id) { return (document.getElementById(id) || {}).value || ''; }
 function sv(id, val) { const el = document.getElementById(id); if (el && val) el.value = val; }
 
+/* ---- Date/time formatting ---- */
 function fmtDate(d) {
   if (!d) return '';
   const [y, m, day] = d.split('-');
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return months[parseInt(m) - 1] + ' ' + parseInt(day) + ', ' + y;
+  return `${months[parseInt(m) - 1]} ${parseInt(day)}, ${y}`;
 }
 
 function fmtTime(t) {
   if (!t) return '';
   const [h, m] = t.split(':');
   const hr = parseInt(h);
-  return (hr > 12 ? hr - 12 : hr || 12) + ':' + m + ' ' + (hr >= 12 ? 'PM' : 'AM');
+  return `${hr > 12 ? hr - 12 : hr || 12}:${m} ${hr >= 12 ? 'PM' : 'AM'}`;
 }
 
+/* ---- Collect form data ---- */
 function getFormData() {
   return {
     meetingType: activeTag('mt'),
@@ -564,6 +886,7 @@ function getFormData() {
   };
 }
 
+/* ---- Restore form from saved data ---- */
 function restoreFormData(d) {
   if (!d) return;
   sv('f-company', d.company); sv('f-date', d.date);   sv('f-time', d.time);
@@ -573,10 +896,12 @@ function restoreFormData(d) {
   sv('f-pain', d.pain);       sv('f-roi', d.roi);     sv('f-andrew', d.andrew);
   sv('f-push', d.push);       sv('f-avoid', d.avoid); sv('f-obj', d.obj);
   sv('f-win', d.win);         sv('f-notes', d.notes);
+
   if (d.meetingType) document.querySelectorAll('[data-g="mt"]').forEach(e => { if (e.textContent.trim() === d.meetingType) e.classList.add('on'); });
   if (d.format)      document.querySelectorAll('[data-g="fmt"]').forEach(e => { if (e.textContent.trim() === d.format) e.classList.add('on'); });
 }
 
+/* ---- Auto-save ---- */
 function debounceSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
@@ -588,6 +913,7 @@ function debounceSave() {
   }, 800);
 }
 
+/* ---- Clear form ---- */
 function clearForm() {
   if (!confirm('Clear all form fields?')) return;
   ['f-company','f-date','f-time','f-tz','f-loc','f-value','f-close','f-stage',
@@ -600,128 +926,169 @@ function clearForm() {
   try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
 }
 
+/* ---- Attendee rendering with auto-generated LinkedIn search ---- */
 function parseAttendee(line) {
-  const urlMatch = line.match(/(https?:\/\/(www\.)?linkedin\.com\/in\/[^\s,]+)/i);
-  const linkedin = urlMatch ? urlMatch[1] : '';
-  const rest = line.replace(urlMatch ? urlMatch[0] : '', '').replace(/,\s*$/, '').trim();
-  const parts = rest.split(',').map(s => s.trim()).filter(Boolean);
-  return { name: parts[0] || '', title: parts.slice(1).join(', '), linkedin };
+  const parts = line.split(',').map(s => s.trim()).filter(Boolean);
+  return { name: parts[0] || '', title: parts.slice(1).join(', ') };
 }
 
-function renderAttendee(line) {
+function buildLinkedInSearchURL(name, title, company) {
+  const keywords = [name, title, company].filter(Boolean).join(' ');
+  return `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(keywords)}`;
+}
+
+function renderAttendee(line, opts) {
   const a = parseAttendee(line);
-  const linkedinIcon = a.linkedin
-    ? ' <a href="' + a.linkedin + '" target="_blank" rel="noopener" class="brief-linkedin-link" title="LinkedIn profile"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>'
-    : '';
-  const titlePart = a.title ? '<span class="brief-attendee-title">, ' + a.title + '</span>' : '';
-  return '<div class="brief-attendee-item">' + a.name + titlePart + linkedinIcon + '</div>';
+  const linkedinSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`;
+  let linkedinIcon = '';
+  if (opts && opts.showLinkedIn && a.name) {
+    const url = buildLinkedInSearchURL(a.name, a.title, opts.company);
+    linkedinIcon = ` <a href="${url}" target="_blank" rel="noopener" class="brief-linkedin-link" title="Search LinkedIn for ${a.name}">${linkedinSvg}</a>`;
+  }
+  const titlePart = a.title ? `<span class="brief-attendee-title">, ${a.title}</span>` : '';
+  return `<div class="brief-attendee-item">${a.name}${titlePart}${linkedinIcon}</div>`;
 }
 
+/* ---- Build the brief HTML ---- */
 function buildBriefHTML(d) {
   const lines = t => (t || '').split('\n').map(l => l.trim()).filter(Boolean);
-  const bullets = arr => arr.map(l => '<li>' + l + '</li>').join('');
+  const bullets = (arr) => arr.map(l => `<li>${l}</li>`).join('');
 
-  const enableLines = lines(d.enable);
-  const clientLines = lines(d.client);
-  const pushLines   = lines(d.push);
-  const avoidLines  = lines(d.avoid);
-  const objLines    = lines(d.obj);
+  const enableLines  = lines(d.enable);
+  const clientLines  = lines(d.client);
+  const pushLines    = lines(d.push);
+  const avoidLines   = lines(d.avoid);
+  const objLines     = lines(d.obj);
 
   const metaItems = [
-    { label: 'Format',     value: d.format || '—' },
-    { label: 'Date',       value: [fmtDate(d.date), fmtTime(d.time), d.tz].filter(Boolean).join(' ') || '—' },
-    { label: 'Location',   value: d.loc || '—' },
-    { label: 'Deal value', value: d.value || '—' },
-    { label: 'Close date', value: fmtDate(d.close) || '—' },
-    { label: 'Stage',      value: d.stage || '—' },
+    { label: 'Format',      value: d.format || '—' },
+    { label: 'Date',        value: [fmtDate(d.date), fmtTime(d.time), d.tz].filter(Boolean).join(' ') || '—' },
+    { label: 'Location',    value: d.loc || '—' },
+    { label: 'Deal value',  value: d.value || '—' },
+    { label: 'Close date',  value: fmtDate(d.close) || '—' },
+    { label: 'Stage',       value: d.stage || '—' },
   ];
 
-  return '\
-    <div class="brief-header-block">\
-      <div class="brief-company">' + (d.company || 'Unnamed company') + '</div>\
-      ' + (d.meetingType ? '<span class="brief-meeting-type">' + d.meetingType + '</span>' : '') + '\
-      <div class="brief-meta-grid">\
-        ' + metaItems.map(m => '<div class="brief-meta-item"><div class="brief-meta-label">' + m.label + '</div><div class="brief-meta-value">' + m.value + '</div></div>').join('') + '\
-      </div>\
-    </div>\
-    ' + ((enableLines.length || clientLines.length) ? '\
-    <div class="brief-section">\
-      <div class="brief-section-title">Attendees</div>\
-      <div class="brief-attendees">\
-        <div class="brief-attendee-group">\
-          <div class="brief-attendee-label">Enable team</div>\
-          ' + (enableLines.map(l => renderAttendee(l)).join('') || '<div class="brief-attendee-item" style="color:var(--text-hint)">—</div>') + '\
-        </div>\
-        <div class="brief-attendee-group">\
-          <div class="brief-attendee-label">Client contacts</div>\
-          ' + (clientLines.map(l => renderAttendee(l)).join('') || '<div class="brief-attendee-item" style="color:var(--text-hint)">—</div>') + '\
-        </div>\
-      </div>\
-    </div>' : '') + '\
-    ' + ((d.snapshot || d.pain || d.roi) ? '\
-    <div class="brief-section">\
-      <div class="brief-section-title">Company context</div>\
-      ' + (d.snapshot ? '<p class="brief-body-text" style="margin-bottom:12px">' + d.snapshot + '</p>' : '') + '\
-      <div class="brief-two-col">\
-        ' + (d.pain ? '<div class="brief-col-card"><div class="brief-col-card-title">Pain points</div><p class="brief-body-text">' + d.pain + '</p></div>' : '') + '\
-        ' + (d.roi  ? '<div class="brief-col-card"><div class="brief-col-card-title">ROI / value</div><p class="brief-body-text">' + d.roi + '</p></div>' : '') + '\
-      </div>\
-    </div>' : '') + '\
-    ' + (d.andrew ? '\
-    <div class="brief-section">\
-      <div class="brief-section-title green">Andrew\'s role in this meeting</div>\
-      <div class="brief-andrew-box"><p>' + d.andrew + '</p></div>\
-    </div>' : '') + '\
-    ' + ((pushLines.length || avoidLines.length) ? '\
-    <div class="brief-section">\
-      <div class="brief-section-title">Messaging strategy</div>\
-      <div class="brief-two-col">\
-        <div class="brief-col-card"><div class="brief-col-card-title push">What to push</div><ul>' + bullets(pushLines) + '</ul></div>\
-        <div class="brief-col-card"><div class="brief-col-card-title avoid">What to avoid</div><ul>' + bullets(avoidLines) + '</ul></div>\
-      </div>\
-    </div>' : '') + '\
-    ' + (objLines.length ? '\
-    <div class="brief-section">\
-      <div class="brief-section-title">Meeting objectives</div>\
-      <ol class="brief-objectives">\
-        ' + objLines.map((l, i) => '<li><span class="brief-obj-num">' + (i+1) + '</span><span>' + l.replace(/^\d+[.)]\s*/, '') + '</span></li>').join('') + '\
-      </ol>\
-    </div>' : '') + '\
-    ' + (d.notes ? '\
-    <div class="brief-section">\
-      <div class="brief-section-title">Notes</div>\
-      <p class="brief-body-text">' + d.notes + '</p>\
-    </div>' : '') + '\
-    ' + (d.win ? '\
-    <div class="brief-section">\
-      <div class="brief-win-box">\
-        <div class="brief-win-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>\
-        <div><div class="brief-win-label">Win condition</div><div class="brief-win-text">' + d.win + '</div></div>\
-      </div>\
-    </div>' : '') + '\
-    <div class="brief-footer">Generated by Enable EBD Brief Generator</div>';
+  return `
+    <div class="brief-header-block">
+      <div class="brief-company">${d.company || 'Unnamed company'}</div>
+      ${d.meetingType ? `<span class="brief-meeting-type">${d.meetingType}</span>` : ''}
+      <div class="brief-meta-grid">
+        ${metaItems.map(m => `
+          <div class="brief-meta-item">
+            <div class="brief-meta-label">${m.label}</div>
+            <div class="brief-meta-value">${m.value}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    ${(enableLines.length || clientLines.length) ? `
+    <div class="brief-section">
+      <div class="brief-section-title">Attendees</div>
+      <div class="brief-attendees">
+        <div class="brief-attendee-group">
+          <div class="brief-attendee-label">Enable team</div>
+          ${enableLines.map(l => renderAttendee(l)).join('') || '<div class="brief-attendee-item" style="color:var(--text-hint)">—</div>'}
+        </div>
+        <div class="brief-attendee-group">
+          <div class="brief-attendee-label">Client contacts</div>
+          ${clientLines.map(l => renderAttendee(l, { showLinkedIn: true, company: d.company })).join('') || '<div class="brief-attendee-item" style="color:var(--text-hint)">—</div>'}
+        </div>
+      </div>
+    </div>` : ''}
+
+    ${(d.snapshot || d.pain || d.roi) ? `
+    <div class="brief-section">
+      <div class="brief-section-title">Company context</div>
+      ${d.snapshot ? `<p class="brief-body-text" style="margin-bottom:12px">${d.snapshot}</p>` : ''}
+      <div class="brief-two-col">
+        ${d.pain ? `<div class="brief-col-card"><div class="brief-col-card-title">Pain points</div><p class="brief-body-text">${d.pain}</p></div>` : ''}
+        ${d.roi  ? `<div class="brief-col-card"><div class="brief-col-card-title">ROI / value</div><p class="brief-body-text">${d.roi}</p></div>` : ''}
+      </div>
+    </div>` : ''}
+
+    ${d.andrew ? `
+    <div class="brief-section">
+      <div class="brief-section-title green">Andrew's role in this meeting</div>
+      <div class="brief-andrew-box"><p>${d.andrew}</p></div>
+    </div>` : ''}
+
+    ${(pushLines.length || avoidLines.length) ? `
+    <div class="brief-section">
+      <div class="brief-section-title">Messaging strategy</div>
+      <div class="brief-two-col">
+        <div class="brief-col-card">
+          <div class="brief-col-card-title push">What to push</div>
+          <ul>${bullets(pushLines)}</ul>
+        </div>
+        <div class="brief-col-card">
+          <div class="brief-col-card-title avoid">What to avoid</div>
+          <ul>${bullets(avoidLines)}</ul>
+        </div>
+      </div>
+    </div>` : ''}
+
+    ${objLines.length ? `
+    <div class="brief-section">
+      <div class="brief-section-title">Meeting objectives</div>
+      <ol class="brief-objectives">
+        ${objLines.map((l, i) => `
+          <li>
+            <span class="brief-obj-num">${i + 1}</span>
+            <span>${l.replace(/^\d+[.)]\s*/, '')}</span>
+          </li>`).join('')}
+      </ol>
+    </div>` : ''}
+
+    ${d.notes ? `
+    <div class="brief-section">
+      <div class="brief-section-title">Notes</div>
+      <p class="brief-body-text">${d.notes}</p>
+    </div>` : ''}
+
+    ${d.win ? `
+    <div class="brief-section">
+      <div class="brief-win-box">
+        <div class="brief-win-icon">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="brief-win-label">Win condition</div>
+          <div class="brief-win-text">${d.win}</div>
+        </div>
+      </div>
+    </div>` : ''}
+
+    <div class="brief-footer">Generated by Enable EBD Brief Generator</div>
+  `;
 }
 
+/* ---- Generate brief ---- */
 function generateBrief() {
   const d = getFormData();
   currentBriefData = d;
   saveToHistory(d);
+
   document.getElementById('brief-content').innerHTML = buildBriefHTML(d);
   document.getElementById('brief-modal').style.display = 'flex';
 }
 
+/* ---- Modal controls ---- */
 function closeBriefModal(e) {
   if (!e || e.target.id === 'brief-modal') {
     document.getElementById('brief-modal').style.display = 'none';
   }
 }
 
-function printBrief() { window.print(); }
+function printBrief() {
+  window.print();
+}
 
+/* ---- History ---- */
 function saveToHistory(d) {
   try {
     let hist = JSON.parse(localStorage.getItem(HIST_KEY) || '[]');
-    hist.unshift(Object.assign({ id: Date.now(), savedAt: new Date().toISOString() }, d));
+    hist.unshift({ id: Date.now(), savedAt: new Date().toISOString(), ...d });
     if (hist.length > 20) hist = hist.slice(0, 20);
     localStorage.setItem(HIST_KEY, JSON.stringify(hist));
     updateHistCount(hist.length);
@@ -730,7 +1097,7 @@ function saveToHistory(d) {
 
 function updateHistCount(n) {
   const el = document.getElementById('hist-count');
-  if (el) el.textContent = n ? ' (' + n + ')' : '';
+  if (el) el.textContent = n ? ` (${n})` : '';
 }
 
 function renderHistory() {
@@ -739,24 +1106,29 @@ function renderHistory() {
     const el = document.getElementById('hist-list');
     const label = document.getElementById('hist-label');
     updateHistCount(hist.length);
+
     if (!hist.length) {
-      el.innerHTML = '<div class="history-empty">No saved briefs yet.<br>Generate a brief to see it here.</div>';
+      el.innerHTML = `<div class="history-empty">No saved briefs yet.<br>Generate a brief to see it here.</div>`;
       if (label) label.textContent = 'Saved briefs';
       return;
     }
-    if (label) label.textContent = hist.length + ' saved brief' + (hist.length !== 1 ? 's' : '');
-    el.innerHTML = hist.map((h, i) =>
-      '<div class="hist-item" style="margin-bottom:10px">' +
-        '<div class="hist-top"><span class="hist-badge">' + (h.meetingType || 'Brief') + '</span><span class="hist-company">' + (h.company || 'Unnamed company') + '</span></div>' +
-        '<div class="hist-meta">' + [h.stage, h.value, fmtDate(h.date)].filter(Boolean).join(' · ') + '</div>' +
-        '<div class="hist-meta">Saved ' + new Date(h.savedAt).toLocaleString() + '</div>' +
-        '<div class="hist-actions">' +
-          '<button class="btn-secondary btn-sm" style="background:#1a2e3d;color:#fff;border-color:#1a2e3d" onclick="loadFromHistory(' + i + ')">Load into form</button>' +
-          '<button class="btn-secondary btn-sm" onclick="viewBriefFromHistory(' + i + ')">View brief</button>' +
-          '<button class="btn-secondary btn-sm" onclick="deleteFromHistory(' + i + ')">Delete</button>' +
-        '</div>' +
-      '</div>'
-    ).join('');
+
+    if (label) label.textContent = `${hist.length} saved brief${hist.length !== 1 ? 's' : ''}`;
+
+    el.innerHTML = hist.map((h, i) => `
+      <div class="hist-item" style="margin-bottom:10px">
+        <div class="hist-top">
+          <span class="hist-badge">${h.meetingType || 'Brief'}</span>
+          <span class="hist-company">${h.company || 'Unnamed company'}</span>
+        </div>
+        <div class="hist-meta">${[h.stage, h.value, fmtDate(h.date)].filter(Boolean).join(' · ')}</div>
+        <div class="hist-meta">Saved ${new Date(h.savedAt).toLocaleString()}</div>
+        <div class="hist-actions">
+          <button class="btn-secondary btn-sm" style="background:#1a2e3d;color:#fff;border-color:#1a2e3d" onclick="loadFromHistory(${i})">Load into form</button>
+          <button class="btn-secondary btn-sm" onclick="viewBriefFromHistory(${i})">View brief</button>
+          <button class="btn-secondary btn-sm" onclick="deleteFromHistory(${i})">Delete</button>
+        </div>
+      </div>`).join('');
   } catch(e) {}
 }
 
@@ -790,6 +1162,7 @@ function clearHistory() {
   try { localStorage.removeItem(HIST_KEY); renderHistory(); } catch(e) {}
 }
 
+/* ---- LinkedIn lookup ---- */
 function initials(name) {
   return name.trim().split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
 }
@@ -797,31 +1170,60 @@ function initials(name) {
 function lookupLinkedIn() {
   const raw = document.getElementById('li-input').value.trim();
   if (!raw) return;
+
   const contacts = raw.split('\n').map(l => l.trim()).filter(Boolean);
   const container = document.getElementById('li-results');
+
   container.innerHTML = contacts.map(c => {
     const name = c.split(',')[0].trim();
     const rest = c.split(',').slice(1).join(',').trim();
     const id   = 'li-' + btoa(encodeURIComponent(c)).replace(/[^a-zA-Z0-9]/g, '').slice(0, 16);
-    return '<div class="li-card" id="' + id + '"><div class="li-card-header"><div class="li-avatar">' + initials(name) + '</div><div><div class="li-name">' + name + '</div><div class="li-title">' + rest + '</div></div></div><div class="li-card-body"><div class="li-loading">Researching profile...</div></div></div>';
+    return `
+      <div class="li-card" id="${id}">
+        <div class="li-card-header">
+          <div class="li-avatar">${initials(name)}</div>
+          <div>
+            <div class="li-name">${name}</div>
+            <div class="li-title">${rest}</div>
+          </div>
+        </div>
+        <div class="li-card-body">
+          <div class="li-loading">Researching profile...</div>
+        </div>
+      </div>`;
   }).join('');
+
+  // Fire into Claude chat via the prompt interface
   const prompt = buildLinkedInPrompt(contacts);
   if (typeof sendPrompt === 'function') {
     sendPrompt(prompt);
   } else {
+    // Standalone mode — show placeholder
     contacts.forEach(c => {
       const name = c.split(',')[0].trim();
+      const rest = c.split(',').slice(1).join(',').trim();
       const id   = 'li-' + btoa(encodeURIComponent(c)).replace(/[^a-zA-Z0-9]/g, '').slice(0, 16);
-      const body = document.querySelector('#' + id + ' .li-card-body');
-      if (body) body.innerHTML = '<p style="font-size:13px;color:var(--text-muted)">In the Claude interface, this will trigger an AI-powered research brief for <strong>' + name + '</strong>.</p>';
+      const body = document.querySelector(`#${id} .li-card-body`);
+      if (body) body.innerHTML = `<p style="font-size:13px;color:var(--text-muted)">In the Claude interface, this will trigger an AI-powered research brief for <strong>${name}</strong>.</p>`;
     });
   }
 }
 
 function buildLinkedInPrompt(contacts) {
-  return 'For each of the following client contacts, provide a concise professional intelligence brief to help a sales rep (Andrew) prepare. For each person include:\n- Career background and current role tenure\n- What drives someone in their role\n- Priorities or concerns about a rebate management software purchase\n- Any known public information\n- 2\u20133 personalised talking points for Andrew\n\nFormat each person as a clear, distinct card/section.\n\nContacts:\n' + contacts.join('\n');
+  return `For each of the following client contacts, provide a concise professional intelligence brief to help a sales rep (Andrew) prepare. For each person include:
+- Career background and current role tenure
+- What drives someone in their role
+- Priorities or concerns about a rebate management software purchase
+- Any known public information
+- 2–3 personalised talking points for Andrew
+
+Format each person as a clear, distinct card/section.
+
+Contacts:
+${contacts.join('\n')}`;
 }
 
+/* ---- Init ---- */
 (function init() {
   try {
     const draft = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
@@ -830,6 +1232,7 @@ function buildLinkedInPrompt(contacts) {
     updateHistCount(hist.length);
   } catch(e) {}
 })();
-  </script>
+
+</script>
 </body>
 </html>
