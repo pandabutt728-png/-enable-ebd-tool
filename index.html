@@ -97,7 +97,11 @@
           <h2 class="sec-label">Attendees</h2>
           <div class="g2">
             <div class="f"><label for="f-enable">Enable team (names &amp; titles)</label><textarea id="f-enable" placeholder="Tyler Cogan, SAE&#10;Fay Gowani, Sales Director" oninput="debounceSave()"></textarea></div>
-            <div class="f"><label for="f-client">Client contacts (names &amp; titles)</label><textarea id="f-client" placeholder="John Smith, CAO&#10;Jane Doe, President" oninput="debounceSave()"></textarea></div>
+            <div class="f">
+              <label for="f-client">Client contacts (names &amp; titles)</label>
+              <textarea id="f-client" placeholder="John Smith, CAO&#10;Jane Doe, President" oninput="debounceSave(); renderClientLinkedInLinks()"></textarea>
+              <div id="client-linkedin-links" class="client-li-links"></div>
+            </div>
           </div>
         </section>
 

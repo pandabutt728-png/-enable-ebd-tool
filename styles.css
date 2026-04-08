@@ -370,6 +370,38 @@ body {
   line-height: 1.8;
 }
 
+/* ---- Client LinkedIn links (form) ---- */
+.client-li-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.client-li-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #0a66c2;
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(10, 102, 194, 0.08);
+  transition: background 0.15s;
+  width: fit-content;
+}
+
+.client-li-link:hover {
+  background: rgba(10, 102, 194, 0.15);
+  text-decoration: none;
+}
+
+.client-li-link svg {
+  flex-shrink: 0;
+}
+
 /* ---- LinkedIn cards ---- */
 .li-card {
   background: var(--surface);
