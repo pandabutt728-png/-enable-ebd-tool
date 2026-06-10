@@ -32,8 +32,25 @@ function activeTag(g) {
 }
 
 /* ---- Field helpers ---- */
-function gv(id) { return (document.getElementById(id) || {}).value || ''; }
-function sv(id, val) { const el = document.getElementById(id); if (el && val) el.value = val; }
+function gv(id) {
+  const el = document.getElementById(id);
+  if (!el) return '';
+  if (el.contentEditable === 'true') {
+    const h = el.innerHTML;
+    return (h === '' || h === '<br>') ? '' : h;
+  }
+  return el.value || '';
+}
+
+function sv(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.contentEditable === 'true') {
+    el.innerHTML = val || '';
+  } else {
+    if (val) el.value = val;
+  }
+}
 
 /* ---- Date/time formatting ---- */
 function fmtDate(d) {
@@ -53,42 +70,44 @@ function fmtTime(t) {
 /* ---- Collect form data ---- */
 function getFormData() {
   return {
-    meetingType: activeTag('mt'),
-    format:      activeTag('fmt'),
-    company:     gv('f-company'),
-    date:        gv('f-date'),
-    time:        gv('f-time'),
-    tz:          gv('f-tz'),
-    loc:         gv('f-loc'),
-    value:       gv('f-value'),
-    close:       gv('f-close'),
-    stage:       gv('f-stage'),
-    enable:      gv('f-enable'),
-    client:      gv('f-client'),
-    snapshot:    gv('f-snapshot'),
-    pain:        gv('f-pain'),
-    roi:         gv('f-roi'),
-    andrew:      gv('f-andrew'),
-    agenda:      gv('f-agenda'),
-    push:        gv('f-push'),
-    avoid:       gv('f-avoid'),
-    obj:         gv('f-obj'),
-    win:         gv('f-win'),
-    notes:       gv('f-notes'),
+    meetingType:  activeTag('mt'),
+    format:       activeTag('fmt'),
+    company:      gv('f-company'),
+    date:         gv('f-date'),
+    time:         gv('f-time'),
+    tz:           gv('f-tz'),
+    loc:          gv('f-loc'),
+    value:        gv('f-value'),
+    close:        gv('f-close'),
+    stage:        gv('f-stage'),
+    enable:       gv('f-enable'),
+    client:       gv('f-client'),
+    clientLiUrls: gv('f-client-li-urls'),
+    snapshot:     gv('f-snapshot'),
+    pain:         gv('f-pain'),
+    roi:          gv('f-roi'),
+    andrew:       gv('f-andrew'),
+    agenda:       gv('f-agenda'),
+    push:         gv('f-push'),
+    avoid:        gv('f-avoid'),
+    obj:          gv('f-obj'),
+    win:          gv('f-win'),
+    notes:        gv('f-notes'),
   };
 }
 
 /* ---- Restore form from saved data ---- */
 function restoreFormData(d) {
   if (!d) return;
-  sv('f-company', d.company); sv('f-date', d.date);   sv('f-time', d.time);
-  sv('f-tz', d.tz);           sv('f-loc', d.loc);     sv('f-value', d.value);
-  sv('f-close', d.close);     sv('f-stage', d.stage); sv('f-enable', d.enable);
-  sv('f-client', d.client);   sv('f-snapshot', d.snapshot);
-  sv('f-pain', d.pain);       sv('f-roi', d.roi);     sv('f-andrew', d.andrew);
+  sv('f-company', d.company);       sv('f-date', d.date);    sv('f-time', d.time);
+  sv('f-tz', d.tz);                 sv('f-loc', d.loc);      sv('f-value', d.value);
+  sv('f-close', d.close);           sv('f-stage', d.stage);  sv('f-enable', d.enable);
+  sv('f-client', d.client);         sv('f-client-li-urls', d.clientLiUrls);
+  sv('f-snapshot', d.snapshot);
+  sv('f-pain', d.pain);             sv('f-roi', d.roi);      sv('f-andrew', d.andrew);
   sv('f-agenda', d.agenda);
-  sv('f-push', d.push);       sv('f-avoid', d.avoid); sv('f-obj', d.obj);
-  sv('f-win', d.win);         sv('f-notes', d.notes);
+  sv('f-push', d.push);             sv('f-avoid', d.avoid);  sv('f-obj', d.obj);
+  sv('f-win', d.win);               sv('f-notes', d.notes);
 
   if (d.meetingType) document.querySelectorAll('[data-g="mt"]').forEach(e => { if (e.textContent.trim() === d.meetingType) e.classList.add('on'); });
   if (d.format)      document.querySelectorAll('[data-g="fmt"]').forEach(e => { if (e.textContent.trim() === d.format) e.classList.add('on'); });
@@ -110,12 +129,18 @@ function debounceSave() {
 function clearForm() {
   if (!confirm('Clear all form fields?')) return;
   ['f-company','f-date','f-time','f-tz','f-loc','f-value','f-close','f-stage',
-   'f-enable','f-client','f-snapshot','f-pain','f-roi','f-andrew',
-   'f-agenda','f-push','f-avoid','f-obj','f-win','f-notes'].forEach(id => {
+   'f-enable','f-client','f-client-li-urls','f-roi',
+   'f-agenda','f-push','f-avoid','f-obj','f-win'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+  // Clear rich editors
+  ['f-snapshot','f-pain','f-andrew','f-notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.contentEditable === 'true') el.innerHTML = '';
+  });
   document.querySelectorAll('.tag.on').forEach(t => t.classList.remove('on'));
+  document.getElementById('client-linkedin-links').innerHTML = '';
   try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
 }
 
@@ -136,8 +161,10 @@ function renderAttendee(line, opts) {
   const a = parseAttendee(line);
   let linkedinLink = '';
   if (opts && opts.showLinkedIn && a.name) {
-    const url = buildLinkedInSearchURL(a.name, a.title, opts.company);
-    linkedinLink = ` <a href="${url}" target="_blank" rel="noopener" class="brief-linkedin-link" title="Search LinkedIn for ${a.name}">in</a>`;
+    const isDirect = opts.linkedinUrl && opts.linkedinUrl.startsWith('http');
+    const url = isDirect ? opts.linkedinUrl : buildLinkedInSearchURL(a.name, a.title, opts.company);
+    const title = isDirect ? `Open LinkedIn profile for ${a.name}` : `Search LinkedIn for ${a.name}`;
+    linkedinLink = ` <a href="${url}" target="_blank" rel="noopener" class="brief-linkedin-link" title="${title}">in</a>`;
   }
   const titlePart = a.title ? `<span class="brief-attendee-title">, ${a.title}</span>` : '';
   return `<div class="brief-attendee-item">${a.name}${titlePart}${linkedinLink}</div>`;
@@ -152,15 +179,21 @@ function renderClientLinkedInLinks() {
 
   const company = gv('f-company');
   const contacts = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const rawUrls = (gv('f-client-li-urls') || '').split('\n').map(l => l.trim());
 
-  container.innerHTML = contacts.map(line => {
+  container.innerHTML = contacts.map((line, i) => {
     const a = parseAttendee(line);
     if (!a.name) return '';
-    const url = buildLinkedInSearchURL(a.name, a.title, company);
+    const directUrl = rawUrls[i] && rawUrls[i].startsWith('http') ? rawUrls[i] : null;
+    const url = directUrl || buildLinkedInSearchURL(a.name, a.title, company);
     const titlePart = a.title ? ` · ${a.title}` : '';
+    const tag = directUrl
+      ? `<span class="li-tag li-tag-direct">direct</span>`
+      : `<span class="li-tag">search</span>`;
     return `<a href="${url}" target="_blank" rel="noopener" class="client-li-link">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
       <span>${a.name}${titlePart}</span>
+      ${tag}
     </a>`;
   }).join('');
 }
@@ -169,9 +202,12 @@ function renderClientLinkedInLinks() {
 function buildBriefHTML(d) {
   const lines = t => (t || '').split('\n').map(l => l.trim()).filter(Boolean);
   const bullets = (arr) => arr.map(l => `<li>${l}</li>`).join('');
+  // Rich text fields already contain HTML; plain text fields need wrapping
+  const richHtml = (h) => h || '';
 
   const enableLines  = lines(d.enable);
   const clientLines  = lines(d.client);
+  const clientLiUrls = (d.clientLiUrls || '').split('\n').map(l => l.trim());
   const agendaLines  = lines(d.agenda);
   const pushLines    = lines(d.push);
   const avoidLines   = lines(d.avoid);
@@ -209,7 +245,7 @@ function buildBriefHTML(d) {
         </div>
         <div class="brief-attendee-group">
           <div class="brief-attendee-label">Client contacts</div>
-          ${clientLines.map(l => renderAttendee(l, { showLinkedIn: true, company: d.company })).join('') || '<div class="brief-attendee-item" style="color:var(--text-hint)">—</div>'}
+          ${clientLines.map((l, i) => renderAttendee(l, { showLinkedIn: true, company: d.company, linkedinUrl: clientLiUrls[i] })).join('') || '<div class="brief-attendee-item" style="color:var(--text-hint)">—</div>'}
         </div>
       </div>
     </div>` : ''}
@@ -217,9 +253,9 @@ function buildBriefHTML(d) {
     ${(d.snapshot || d.pain || d.roi) ? `
     <div class="brief-section">
       <div class="brief-section-title">Company context</div>
-      ${d.snapshot ? `<p class="brief-body-text" style="margin-bottom:12px">${d.snapshot}</p>` : ''}
+      ${d.snapshot ? `<div class="brief-body-text" style="margin-bottom:12px">${richHtml(d.snapshot)}</div>` : ''}
       <div class="brief-two-col">
-        ${d.pain ? `<div class="brief-col-card"><div class="brief-col-card-title">Pain points</div><p class="brief-body-text">${d.pain}</p></div>` : ''}
+        ${d.pain ? `<div class="brief-col-card"><div class="brief-col-card-title">Pain points</div><div class="brief-body-text">${richHtml(d.pain)}</div></div>` : ''}
         ${d.roi  ? `<div class="brief-col-card"><div class="brief-col-card-title">ROI / value</div><p class="brief-body-text">${d.roi}</p></div>` : ''}
       </div>
     </div>` : ''}
@@ -227,7 +263,7 @@ function buildBriefHTML(d) {
     ${d.andrew ? `
     <div class="brief-section">
       <div class="brief-section-title green">Andrew's role in this meeting</div>
-      <div class="brief-andrew-box"><p>${d.andrew}</p></div>
+      <div class="brief-andrew-box"><div class="brief-andrew-content">${richHtml(d.andrew)}</div></div>
     </div>` : ''}
 
     ${agendaLines.length ? `
@@ -272,7 +308,7 @@ function buildBriefHTML(d) {
     ${d.notes ? `
     <div class="brief-section">
       <div class="brief-section-title">Notes</div>
-      <p class="brief-body-text">${d.notes}</p>
+      <div class="brief-body-text">${richHtml(d.notes)}</div>
     </div>` : ''}
 
     ${d.win ? `
@@ -391,6 +427,52 @@ function clearHistory() {
   try { localStorage.removeItem(HIST_KEY); renderHistory(); } catch(e) {}
 }
 
+/* ---- Rich text editor ---- */
+function convertToRichEditor(id) {
+  const ta = document.getElementById(id);
+  if (!ta) return;
+
+  const isAndrew = id === 'f-andrew';
+
+  // Toolbar
+  const toolbar = document.createElement('div');
+  toolbar.className = isAndrew ? 'rich-toolbar andrew-toolbar' : 'rich-toolbar';
+  toolbar.innerHTML = `
+    <button type="button" class="rich-btn" title="Bold (⌘B)" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
+    <button type="button" class="rich-btn" title="Italic (⌘I)" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
+    <button type="button" class="rich-btn" title="Bullet list" onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle"><circle cx="2" cy="3.5" r="1.2" fill="currentColor"/><rect x="5" y="2.5" width="8" height="2" rx="1" fill="currentColor"/><circle cx="2" cy="7" r="1.2" fill="currentColor"/><rect x="5" y="6" width="8" height="2" rx="1" fill="currentColor"/><circle cx="2" cy="10.5" r="1.2" fill="currentColor"/><rect x="5" y="9.5" width="8" height="2" rx="1" fill="currentColor"/></svg>
+      List
+    </button>
+  `;
+
+  // Editor div
+  const editor = document.createElement('div');
+  editor.id = id;
+  editor.contentEditable = 'true';
+  editor.className = isAndrew ? 'rich-editor andrew-rich-editor' : 'rich-editor';
+  editor.setAttribute('data-placeholder', ta.placeholder || '');
+  editor.addEventListener('input', debounceSave);
+  editor.addEventListener('keydown', e => {
+    if (e.key === 'Tab') { e.preventDefault(); document.execCommand('insertText', false, '  '); }
+  });
+
+  const parent = ta.parentNode;
+
+  if (isAndrew) {
+    // Andrew: toolbar + editor both go inside the existing andrew-box
+    parent.insertBefore(toolbar, ta);
+    parent.replaceChild(editor, ta);
+  } else {
+    // Wrap toolbar + editor together so they share a border
+    const wrap = document.createElement('div');
+    wrap.className = 'rich-editor-wrap';
+    wrap.appendChild(toolbar);
+    wrap.appendChild(editor);
+    parent.replaceChild(wrap, ta);
+  }
+}
+
 /* ---- LinkedIn lookup ---- */
 function initials(name) {
   return name.trim().split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
@@ -454,6 +536,9 @@ ${contacts.join('\n')}`;
 
 /* ---- Init ---- */
 (function init() {
+  // Convert textareas to rich editors first (before restoring saved data)
+  ['f-snapshot', 'f-pain', 'f-andrew', 'f-notes'].forEach(convertToRichEditor);
+
   try {
     const draft = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
     if (draft) restoreFormData(draft);
