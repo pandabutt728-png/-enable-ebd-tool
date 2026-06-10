@@ -370,6 +370,105 @@ body {
   line-height: 1.8;
 }
 
+/* ---- Word count ---- */
+.wc-label {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-hint);
+  letter-spacing: 0;
+  text-transform: none;
+  float: right;
+  margin-top: 1px;
+  user-select: none;
+}
+
+/* ---- Rich text editor ---- */
+.rich-editor-wrap { display: flex; flex-direction: column; gap: 0; }
+
+.rich-toolbar {
+  display: flex;
+  gap: 2px;
+  padding: 4px 6px;
+  background: var(--surface-alt);
+  border: 0.5px solid var(--border-med);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.rich-btn {
+  padding: 3px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-family: inherit;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 1.4;
+  transition: background 0.1s, color 0.1s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rich-btn:hover { background: var(--border); color: var(--text); }
+.rich-btn b { font-weight: 700; }
+.rich-btn i { font-style: italic; }
+
+.rich-editor {
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface-alt);
+  border: 0.5px solid var(--border-med);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 8px 10px;
+  width: 100%;
+  outline: none;
+  min-height: 72px;
+  line-height: 1.6;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.rich-editor:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(45,122,58,0.1);
+}
+
+.rich-editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-hint);
+  pointer-events: none;
+}
+
+.rich-editor ul { padding-left: 18px; margin: 4px 0; }
+.rich-editor ol { padding-left: 18px; margin: 4px 0; }
+.rich-editor li { margin-bottom: 2px; }
+.rich-editor p { margin: 0 0 4px; }
+.rich-editor br:only-child { display: none; }
+
+/* Andrew rich editor — transparent background to sit on green box */
+.andrew-rich-editor {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-height: 60px;
+}
+.andrew-rich-editor:focus { box-shadow: none !important; }
+
+.andrew-toolbar {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 0.5px solid rgba(45,122,58,0.25) !important;
+  border-radius: 0 !important;
+  margin-bottom: 8px;
+  padding: 0 0 4px;
+}
+.andrew-toolbar .rich-btn { color: var(--green-text); }
+.andrew-toolbar .rich-btn:hover { background: rgba(45,122,58,0.12); }
+
 /* ---- Client LinkedIn links (form) ---- */
 .client-li-links {
   display: flex;
@@ -400,6 +499,37 @@ body {
 
 .client-li-link svg {
   flex-shrink: 0;
+}
+
+.li-tag {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(10, 102, 194, 0.15);
+  color: #0a66c2;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-left: 2px;
+}
+
+.li-tag-direct {
+  background: rgba(45, 122, 58, 0.15);
+  color: var(--green);
+}
+
+.client-li-urls-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-top: 10px;
+  display: block;
+}
+
+.client-li-urls-hint {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-hint);
 }
 
 /* ---- LinkedIn cards ---- */
@@ -583,6 +713,10 @@ body {
 }
 
 .brief-andrew-box p { font-size: 13px; color: var(--text); line-height: 1.7; }
+.brief-andrew-content { font-size: 13px; color: var(--text); line-height: 1.7; }
+.brief-andrew-content ul { padding-left: 18px; margin: 4px 0; }
+.brief-andrew-content li { margin-bottom: 3px; }
+.brief-andrew-content p { margin: 0 0 4px; }
 
 .brief-objectives { padding-left: 0; list-style: none; }
 .brief-objectives li {
@@ -673,59 +807,119 @@ body {
 }
 
 @media print {
-  @page { size: A4; margin: 10mm; }
+  @page { size: A4; margin: 12mm 10mm; }
+
+  /* Force colour rendering — without this backgrounds strip out */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 
   /* Hide everything except the brief modal */
   body > * { display: none !important; }
   #brief-modal { display: block !important; }
   .topbar, .modal-header, .modal-actions, .actions-row { display: none !important; }
   #view-form, #view-history { display: none !important; }
+  .rich-toolbar { display: none !important; }
 
   /* Modal layout for print */
   .modal-backdrop { position: static; padding: 0; background: none; display: block !important; }
-  .modal-box { box-shadow: none; max-width: none; }
+  .modal-box { box-shadow: none; max-width: none; border-radius: 0; }
   .modal-body { padding: 0; }
 
-  /* Compact sizing to fit A4 one page */
-  .brief-header-block { padding: 10px 14px; margin-bottom: 8px; }
-  .brief-company { font-size: 16px; margin-bottom: 2px; }
-  .brief-meeting-type { font-size: 9px; padding: 2px 8px; margin-bottom: 8px; }
-  .brief-meta-grid { gap: 4px; margin-top: 8px; }
-  .brief-meta-label { font-size: 8px; }
-  .brief-meta-value { font-size: 10px; }
+  /* Header block */
+  .brief-header-block {
+    background: #1a2e3d !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+  }
+  .brief-company { font-size: 18px; font-weight: 700; margin-bottom: 3px; color: #fff !important; }
+  .brief-meeting-type {
+    background: #2d7a3a !important;
+    color: #fff !important;
+    font-size: 9px; padding: 2px 9px; margin-bottom: 10px;
+    border-radius: 10px;
+    display: inline-block;
+  }
+  .brief-meta-grid { gap: 6px; margin-top: 10px; }
+  .brief-meta-label { font-size: 8px; color: rgba(255,255,255,0.6) !important; }
+  .brief-meta-value { font-size: 11px; color: rgba(255,255,255,0.95) !important; font-weight: 600; }
 
-  .brief-section { margin-bottom: 6px; }
-  .brief-section-title { margin-bottom: 4px; padding-bottom: 3px; font-size: 9px; }
+  /* Sections */
+  .brief-section { margin-bottom: 8px; page-break-inside: avoid; }
+  .brief-section-title { margin-bottom: 5px; padding-bottom: 4px; font-size: 9px; letter-spacing: 0.06em; color: #6b7280 !important; border-bottom: 0.5px solid #e5e7eb !important; }
+  .brief-section-title.green { color: #2d7a3a !important; border-color: #e8f4ea !important; }
 
-  .brief-attendees { gap: 8px; }
-  .brief-attendee-label { font-size: 9px; margin-bottom: 2px; }
-  .brief-attendee-item { font-size: 10px; line-height: 1.3; }
+  /* Attendees */
+  .brief-attendees { gap: 10px; }
+  .brief-attendee-label { font-size: 9px; font-weight: 600; color: #6b7280 !important; margin-bottom: 3px; }
+  .brief-attendee-item { font-size: 10px; line-height: 1.4; color: #111827 !important; }
+  .brief-attendee-title { color: #6b7280 !important; }
 
-  .brief-body-text { font-size: 10px; line-height: 1.3; }
-  .brief-two-col { gap: 6px; }
-  .brief-col-card { padding: 6px 8px; }
-  .brief-col-card-title { font-size: 9px; margin-bottom: 4px; }
-  .brief-col-card li { font-size: 10px; line-height: 1.3; margin-bottom: 1px; }
-  .brief-col-card ul { padding-left: 12px; }
+  /* Body text */
+  .brief-body-text { font-size: 10px; line-height: 1.5; color: #111827 !important; }
+  .brief-body-text p, .brief-body-text ul, .brief-body-text ol { margin: 0 0 4px; }
+  .brief-body-text li { font-size: 10px; line-height: 1.4; }
 
-  .brief-andrew-box { padding: 6px 10px; }
-  .brief-andrew-box p { font-size: 10px; line-height: 1.3; }
+  /* Two-col cards */
+  .brief-two-col { gap: 8px; }
+  .brief-col-card { background: #f7f8f9 !important; border-radius: 5px; padding: 7px 10px; }
+  .brief-col-card-title { font-size: 9px; margin-bottom: 5px; color: #6b7280 !important; }
+  .brief-col-card-title.push { color: #166534 !important; }
+  .brief-col-card-title.avoid { color: #9a3412 !important; }
+  .brief-col-card li { font-size: 10px; line-height: 1.4; margin-bottom: 2px; color: #111827 !important; }
+  .brief-col-card ul { padding-left: 14px; }
+  .brief-col-card p { font-size: 10px; line-height: 1.4; color: #111827 !important; }
 
-  .brief-agenda li { font-size: 10px; line-height: 1.3; margin-bottom: 1px; }
-  .brief-agenda-num { width: 16px; height: 16px; font-size: 8px; }
+  /* Andrew box */
+  .brief-andrew-box {
+    background: #e8f4ea !important;
+    border-left: 3px solid #2d7a3a !important;
+    border-radius: 0 5px 5px 0;
+    padding: 8px 12px;
+  }
+  .brief-andrew-box p,
+  .brief-andrew-box div { font-size: 10px; line-height: 1.5; color: #111827 !important; }
 
-  .brief-objectives li { font-size: 10px; line-height: 1.3; margin-bottom: 2px; }
-  .brief-obj-num { width: 16px; height: 16px; font-size: 8px; }
+  /* Agenda */
+  .brief-agenda li { font-size: 10px; line-height: 1.4; margin-bottom: 2px; color: #111827 !important; }
+  .brief-agenda-num {
+    width: 16px; height: 16px; font-size: 8px;
+    background: #243d51 !important; color: #fff !important;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
 
-  .brief-win-box { padding: 8px 12px; }
-  .brief-win-icon { width: 22px; height: 22px; }
+  /* Objectives */
+  .brief-objectives li { font-size: 10px; line-height: 1.4; margin-bottom: 3px; color: #111827 !important; }
+  .brief-obj-num {
+    width: 16px; height: 16px; font-size: 8px;
+    background: #1a2e3d !important; color: #fff !important;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Win box */
+  .brief-win-box {
+    background: #e8f4ea !important;
+    border: 1.5px solid #2d7a3a !important;
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+  .brief-win-icon { width: 22px; height: 22px; background: #2d7a3a !important; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
   .brief-win-icon svg { width: 11px; height: 11px; }
-  .brief-win-label { font-size: 9px; margin-bottom: 2px; }
-  .brief-win-text { font-size: 11px; }
+  .brief-win-label { font-size: 9px; color: #1e5429 !important; margin-bottom: 2px; }
+  .brief-win-text { font-size: 12px; font-weight: 600; color: #1e5429 !important; }
 
-  .brief-footer { margin-top: 8px; padding-top: 6px; font-size: 9px; }
+  /* Footer */
+  .brief-footer { margin-top: 10px; padding-top: 8px; font-size: 9px; color: #9ca3af !important; border-top: 0.5px solid #e5e7eb !important; }
 
-  /* Hide form LinkedIn links in print, keep brief ones clickable */
+  /* Hide form LinkedIn links in print, keep brief ones */
   .client-li-links { display: none !important; }
-  .brief-linkedin-link { color: #0a66c2; }
+  .brief-linkedin-link { color: #0a66c2 !important; }
 }
