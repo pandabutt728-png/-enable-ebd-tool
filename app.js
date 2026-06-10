@@ -427,6 +427,37 @@ function clearHistory() {
   try { localStorage.removeItem(HIST_KEY); renderHistory(); } catch(e) {}
 }
 
+/* ---- Word counts ---- */
+function initWordCount(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const badge = document.createElement('span');
+  badge.id = id + '-wc';
+  badge.className = 'word-count';
+  el.parentNode.insertBefore(badge, el.nextSibling);
+
+  function update() {
+    const text = el.contentEditable === 'true' ? (el.innerText || '') : (el.value || '');
+    const n = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    badge.textContent = n === 1 ? '1 word' : n + ' words';
+  }
+
+  el.addEventListener('input', update);
+  update();
+}
+
+function refreshWordCounts() {
+  ['f-andrew', 'f-push', 'f-avoid'].forEach(id => {
+    const el = document.getElementById(id);
+    const badge = document.getElementById(id + '-wc');
+    if (!el || !badge) return;
+    const text = el.contentEditable === 'true' ? (el.innerText || '') : (el.value || '');
+    const n = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    badge.textContent = n === 1 ? '1 word' : n + ' words';
+  });
+}
+
 /* ---- Rich text editor ---- */
 function convertToRichEditor(id) {
   const ta = document.getElementById(id);
@@ -539,9 +570,12 @@ ${contacts.join('\n')}`;
   // Convert textareas to rich editors first (before restoring saved data)
   ['f-snapshot', 'f-pain', 'f-andrew', 'f-notes'].forEach(convertToRichEditor);
 
+  // Wire up word counts
+  ['f-andrew', 'f-push', 'f-avoid'].forEach(initWordCount);
+
   try {
     const draft = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-    if (draft) restoreFormData(draft);
+    if (draft) { restoreFormData(draft); refreshWordCounts(); }
     renderClientLinkedInLinks();
     const hist = JSON.parse(localStorage.getItem(HIST_KEY) || '[]');
     updateHistCount(hist.length);
