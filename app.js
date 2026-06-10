@@ -428,34 +428,24 @@ function clearHistory() {
 }
 
 /* ---- Word counts ---- */
+function updateWordCount(id) {
+  const el  = document.getElementById(id);
+  const badge = document.getElementById(id + '-wc');
+  if (!el || !badge) return;
+  const text = el.contentEditable === 'true' ? (el.innerText || '') : (el.value || '');
+  const n = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+  badge.textContent = '· ' + (n === 1 ? '1 word' : n + ' words');
+}
+
 function initWordCount(id) {
   const el = document.getElementById(id);
   if (!el) return;
-
-  const badge = document.createElement('span');
-  badge.id = id + '-wc';
-  badge.className = 'word-count';
-  el.parentNode.insertBefore(badge, el.nextSibling);
-
-  function update() {
-    const text = el.contentEditable === 'true' ? (el.innerText || '') : (el.value || '');
-    const n = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-    badge.textContent = n === 1 ? '1 word' : n + ' words';
-  }
-
-  el.addEventListener('input', update);
-  update();
+  el.addEventListener('input', () => updateWordCount(id));
+  updateWordCount(id);
 }
 
 function refreshWordCounts() {
-  ['f-andrew', 'f-push', 'f-avoid'].forEach(id => {
-    const el = document.getElementById(id);
-    const badge = document.getElementById(id + '-wc');
-    if (!el || !badge) return;
-    const text = el.contentEditable === 'true' ? (el.innerText || '') : (el.value || '');
-    const n = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-    badge.textContent = n === 1 ? '1 word' : n + ' words';
-  });
+  ['f-andrew', 'f-push', 'f-avoid'].forEach(updateWordCount);
 }
 
 /* ---- Rich text editor ---- */
