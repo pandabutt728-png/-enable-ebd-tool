@@ -147,7 +147,8 @@ function clearForm() {
 /* ---- Attendee rendering with auto-generated LinkedIn search ---- */
 function parseAttendee(line) {
   const parts = line.split(',').map(s => s.trim()).filter(Boolean);
-  return { name: parts[0] || '', title: parts.slice(1).join(', ') };
+  // Format: Name, Title, Company (company is optional)
+  return { name: parts[0] || '', title: parts[1] || '', company: parts[2] || '' };
 }
 
 function buildLinkedInSearchURL(name, title, company) {
@@ -177,7 +178,7 @@ function renderClientLinkedInLinks() {
   if (!container) return;
   if (!raw) { container.innerHTML = ''; return; }
 
-  const company = gv('f-company');
+  const dealCompany = gv('f-company');
   const contacts = raw.split('\n').map(l => l.trim()).filter(Boolean);
   const rawUrls = (gv('f-client-li-urls') || '').split('\n').map(l => l.trim());
 
@@ -185,14 +186,17 @@ function renderClientLinkedInLinks() {
     const a = parseAttendee(line);
     if (!a.name) return '';
     const directUrl = rawUrls[i] && rawUrls[i].startsWith('http') ? rawUrls[i] : null;
-    const url = directUrl || buildLinkedInSearchURL(a.name, a.title, company);
+    // Use per-contact company if provided, otherwise fall back to deal company
+    const searchCompany = a.company || dealCompany;
+    const url = directUrl || buildLinkedInSearchURL(a.name, a.title, searchCompany);
     const titlePart = a.title ? ` · ${a.title}` : '';
+    const companyPart = a.company ? ` · ${a.company}` : '';
     const tag = directUrl
       ? `<span class="li-tag li-tag-direct">direct</span>`
       : `<span class="li-tag">search</span>`;
     return `<a href="${url}" target="_blank" rel="noopener" class="client-li-link">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-      <span>${a.name}${titlePart}</span>
+      <span>${a.name}${titlePart}${companyPart}</span>
       ${tag}
     </a>`;
   }).join('');
@@ -494,6 +498,17 @@ function convertToRichEditor(id) {
   // Toolbar
   const toolbar = document.createElement('div');
   toolbar.className = isAndrew ? 'rich-toolbar andrew-toolbar' : 'rich-toolbar';
+  const extraTools = isAndrew ? '' : `
+    <button type="button" class="rich-btn" title="Underline (⌘U)" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
+    <span class="rich-sep"></span>
+    <button type="button" class="rich-btn" title="Numbered list" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle"><text x="0" y="4" font-size="4" fill="currentColor" font-family="sans-serif">1.</text><rect x="5" y="2.5" width="8" height="2" rx="1" fill="currentColor"/><text x="0" y="8.5" font-size="4" fill="currentColor" font-family="sans-serif">2.</text><rect x="5" y="6" width="8" height="2" rx="1" fill="currentColor"/><text x="0" y="13" font-size="4" fill="currentColor" font-family="sans-serif">3.</text><rect x="5" y="9.5" width="8" height="2" rx="1" fill="currentColor"/></svg>
+      1. List
+    </button>
+    <button type="button" class="rich-btn" title="Clear formatting" onmousedown="event.preventDefault();document.execCommand('removeFormat')">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle"><path d="M2 3h10M5 3l1 8M9 3l-1 8M4 11h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="11" y1="10" x2="13" y2="13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    </button>
+  `;
   toolbar.innerHTML = `
     <button type="button" class="rich-btn" title="Bold (⌘B)" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
     <button type="button" class="rich-btn" title="Italic (⌘I)" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
@@ -501,6 +516,7 @@ function convertToRichEditor(id) {
       <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle"><circle cx="2" cy="3.5" r="1.2" fill="currentColor"/><rect x="5" y="2.5" width="8" height="2" rx="1" fill="currentColor"/><circle cx="2" cy="7" r="1.2" fill="currentColor"/><rect x="5" y="6" width="8" height="2" rx="1" fill="currentColor"/><circle cx="2" cy="10.5" r="1.2" fill="currentColor"/><rect x="5" y="9.5" width="8" height="2" rx="1" fill="currentColor"/></svg>
       List
     </button>
+    ${extraTools}
   `;
 
   // Editor div
