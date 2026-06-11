@@ -812,21 +812,25 @@ body {
 @media print {
   @page { size: A4; margin: 12mm 10mm; }
 
+  /* Force colour rendering — without this backgrounds strip out */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
+  /* Hide everything except the brief modal */
   body > * { display: none !important; }
   #brief-modal { display: block !important; }
   .topbar, .modal-header, .modal-actions, .actions-row { display: none !important; }
   #view-form, #view-history { display: none !important; }
   .rich-toolbar { display: none !important; }
 
+  /* Modal layout for print */
   .modal-backdrop { position: static; padding: 0; background: none; display: block !important; }
   .modal-box { box-shadow: none; max-width: none; border-radius: 0; }
   .modal-body { padding: 0; }
 
+  /* Header block */
   .brief-header-block {
     background: #1a2e3d !important;
     color: #fff !important;
@@ -847,19 +851,23 @@ body {
   .brief-meta-label { font-size: 8px; color: rgba(255,255,255,0.6) !important; }
   .brief-meta-value { font-size: 11px; color: rgba(255,255,255,0.95) !important; font-weight: 600; }
 
+  /* Sections */
   .brief-section { margin-bottom: 8px; page-break-inside: avoid; }
   .brief-section-title { margin-bottom: 5px; padding-bottom: 4px; font-size: 9px; letter-spacing: 0.06em; color: #6b7280 !important; border-bottom: 0.5px solid #e5e7eb !important; }
   .brief-section-title.green { color: #2d7a3a !important; border-color: #e8f4ea !important; }
 
+  /* Attendees */
   .brief-attendees { gap: 10px; }
   .brief-attendee-label { font-size: 9px; font-weight: 600; color: #6b7280 !important; margin-bottom: 3px; }
   .brief-attendee-item { font-size: 10px; line-height: 1.4; color: #111827 !important; }
   .brief-attendee-title { color: #6b7280 !important; }
 
+  /* Body text */
   .brief-body-text { font-size: 10px; line-height: 1.5; color: #111827 !important; }
   .brief-body-text p, .brief-body-text ul, .brief-body-text ol { margin: 0 0 4px; }
   .brief-body-text li { font-size: 10px; line-height: 1.4; }
 
+  /* Two-col cards */
   .brief-two-col { gap: 8px; }
   .brief-col-card { background: #f7f8f9 !important; border-radius: 5px; padding: 7px 10px; }
   .brief-col-card-title { font-size: 9px; margin-bottom: 5px; color: #6b7280 !important; }
@@ -869,6 +877,7 @@ body {
   .brief-col-card ul { padding-left: 14px; }
   .brief-col-card p { font-size: 10px; line-height: 1.4; color: #111827 !important; }
 
+  /* Andrew box */
   .brief-andrew-box {
     background: #e8f4ea !important;
     border-left: 3px solid #2d7a3a !important;
@@ -878,6 +887,7 @@ body {
   .brief-andrew-box p,
   .brief-andrew-box div { font-size: 10px; line-height: 1.5; color: #111827 !important; }
 
+  /* Agenda */
   .brief-agenda li { font-size: 10px; line-height: 1.4; margin-bottom: 2px; color: #111827 !important; }
   .brief-agenda-num {
     width: 16px; height: 16px; font-size: 8px;
@@ -887,6 +897,7 @@ body {
     flex-shrink: 0;
   }
 
+  /* Objectives */
   .brief-objectives li { font-size: 10px; line-height: 1.4; margin-bottom: 3px; color: #111827 !important; }
   .brief-obj-num {
     width: 16px; height: 16px; font-size: 8px;
@@ -896,6 +907,7 @@ body {
     flex-shrink: 0;
   }
 
+  /* Win box */
   .brief-win-box {
     background: #e8f4ea !important;
     border: 1.5px solid #2d7a3a !important;
@@ -907,8 +919,10 @@ body {
   .brief-win-label { font-size: 9px; color: #1e5429 !important; margin-bottom: 2px; }
   .brief-win-text { font-size: 12px; font-weight: 600; color: #1e5429 !important; }
 
+  /* Footer */
   .brief-footer { margin-top: 10px; padding-top: 8px; font-size: 9px; color: #9ca3af !important; border-top: 0.5px solid #e5e7eb !important; }
 
+  /* Hide form LinkedIn links in print, keep brief ones */
   .client-li-links { display: none !important; }
   .brief-linkedin-link { color: #0a66c2 !important; }
 }
