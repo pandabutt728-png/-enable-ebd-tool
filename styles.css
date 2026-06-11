@@ -417,6 +417,8 @@ body {
 .rich-btn:hover { background: var(--border); color: var(--text); }
 .rich-btn b { font-weight: 700; }
 .rich-btn i { font-style: italic; }
+.rich-btn u { text-decoration: underline; }
+.rich-sep { width: 1px; background: var(--border-med); margin: 2px 2px; align-self: stretch; }
 
 .rich-editor {
   font-family: inherit;
