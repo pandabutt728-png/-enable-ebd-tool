@@ -134,7 +134,6 @@ function clearForm() {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
-  // Clear rich editors
   ['f-snapshot','f-pain','f-andrew','f-notes'].forEach(id => {
     const el = document.getElementById(id);
     if (el && el.contentEditable === 'true') el.innerHTML = '';
@@ -144,7 +143,7 @@ function clearForm() {
   try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
 }
 
-/* ---- Attendee rendering with auto-generated LinkedIn search ---- */
+/* ---- Attendee rendering ---- */
 function parseAttendee(line) {
   const parts = line.split(',').map(s => s.trim()).filter(Boolean);
   return { name: parts[0] || '', title: parts.slice(1).join(', ') };
@@ -170,7 +169,7 @@ function renderAttendee(line, opts) {
   return `<div class="brief-attendee-item">${a.name}${titlePart}${linkedinLink}</div>`;
 }
 
-/* ---- Live LinkedIn links under Client contacts textarea ---- */
+/* ---- Live LinkedIn links ---- */
 function renderClientLinkedInLinks() {
   const raw = gv('f-client').trim();
   const container = document.getElementById('client-linkedin-links');
@@ -198,11 +197,10 @@ function renderClientLinkedInLinks() {
   }).join('');
 }
 
-/* ---- Build the brief HTML ---- */
+/* ---- Build brief HTML ---- */
 function buildBriefHTML(d) {
   const lines = t => (t || '').split('\n').map(l => l.trim()).filter(Boolean);
   const bullets = (arr) => arr.map(l => `<li>${l}</li>`).join('');
-  // Rich text fields already contain HTML; plain text fields need wrapping
   const richHtml = (h) => h || '';
 
   const enableLines  = lines(d.enable);
@@ -333,7 +331,6 @@ function generateBrief() {
   const d = getFormData();
   currentBriefData = d;
   saveToHistory(d);
-
   document.getElementById('brief-content').innerHTML = buildBriefHTML(d);
   document.getElementById('brief-modal').style.display = 'flex';
 }
@@ -427,20 +424,56 @@ function clearHistory() {
   try { localStorage.removeItem(HIST_KEY); renderHistory(); } catch(e) {}
 }
 
-/* ---- Word counts ---- */
+/* ---- Word counts (250-word limit) ---- */
+const WC_LIMIT = 250;
+const WC_WARN  = 200;
+
+function countWords(text) {
+  return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+}
+
+function trimToWordLimit(text, limit) {
+  const words = text.trim().split(/\s+/);
+  if (words.length <= limit) return text;
+  return words.slice(0, limit).join(' ');
+}
+
 function updateWordCount(id) {
-  const el  = document.getElementById(id);
+  const el    = document.getElementById(id);
   const badge = document.getElementById(id + '-wc');
   if (!el || !badge) return;
   const text = el.contentEditable === 'true' ? (el.innerText || '') : (el.value || '');
-  const n = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-  badge.textContent = '· ' + (n === 1 ? '1 word' : n + ' words');
+  const n = countWords(text);
+  badge.textContent = '· ' + n + ' / ' + WC_LIMIT + ' words';
+  badge.classList.toggle('wc-warn', n >= WC_WARN && n < WC_LIMIT);
+  badge.classList.toggle('wc-over', n >= WC_LIMIT);
 }
 
 function initWordCount(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.addEventListener('input', () => updateWordCount(id));
+  if (el.contentEditable === 'true') {
+    el.addEventListener('input', () => {
+      const text = el.innerText || '';
+      if (countWords(text) > WC_LIMIT) {
+        el.innerText = trimToWordLimit(text, WC_LIMIT);
+        const sel = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+      updateWordCount(id);
+    });
+  } else {
+    el.addEventListener('input', () => {
+      if (countWords(el.value) > WC_LIMIT) {
+        el.value = trimToWordLimit(el.value, WC_LIMIT);
+      }
+      updateWordCount(id);
+    });
+  }
   updateWordCount(id);
 }
 
@@ -455,7 +488,6 @@ function convertToRichEditor(id) {
 
   const isAndrew = id === 'f-andrew';
 
-  // Toolbar
   const toolbar = document.createElement('div');
   toolbar.className = isAndrew ? 'rich-toolbar andrew-toolbar' : 'rich-toolbar';
   toolbar.innerHTML = `
@@ -467,7 +499,6 @@ function convertToRichEditor(id) {
     </button>
   `;
 
-  // Editor div
   const editor = document.createElement('div');
   editor.id = id;
   editor.contentEditable = 'true';
@@ -481,11 +512,9 @@ function convertToRichEditor(id) {
   const parent = ta.parentNode;
 
   if (isAndrew) {
-    // Andrew: toolbar + editor both go inside the existing andrew-box
     parent.insertBefore(toolbar, ta);
     parent.replaceChild(editor, ta);
   } else {
-    // Wrap toolbar + editor together so they share a border
     const wrap = document.createElement('div');
     wrap.className = 'rich-editor-wrap';
     wrap.appendChild(toolbar);
@@ -525,15 +554,12 @@ function lookupLinkedIn() {
       </div>`;
   }).join('');
 
-  // Fire into Claude chat via the prompt interface
   const prompt = buildLinkedInPrompt(contacts);
   if (typeof sendPrompt === 'function') {
     sendPrompt(prompt);
   } else {
-    // Standalone mode — show placeholder
     contacts.forEach(c => {
       const name = c.split(',')[0].trim();
-      const rest = c.split(',').slice(1).join(',').trim();
       const id   = 'li-' + btoa(encodeURIComponent(c)).replace(/[^a-zA-Z0-9]/g, '').slice(0, 16);
       const body = document.querySelector(`#${id} .li-card-body`);
       if (body) body.innerHTML = `<p style="font-size:13px;color:var(--text-muted)">In the Claude interface, this will trigger an AI-powered research brief for <strong>${name}</strong>.</p>`;
@@ -557,10 +583,7 @@ ${contacts.join('\n')}`;
 
 /* ---- Init ---- */
 (function init() {
-  // Convert textareas to rich editors first (before restoring saved data)
   ['f-snapshot', 'f-pain', 'f-andrew', 'f-notes'].forEach(convertToRichEditor);
-
-  // Wire up word counts
   ['f-andrew', 'f-push', 'f-avoid'].forEach(initWordCount);
 
   try {
