@@ -1,5 +1,5 @@
 /* ============================================================
-   EBD Brief Generator â Enable
+   EBD Brief Generator — Enable
    app.js
    ============================================================ */
 
@@ -7,6 +7,7 @@ const STORAGE_KEY = 'ebd_draft_v2';
 const HIST_KEY    = 'ebd_history_v2';
 
 let saveTimer = null;
+let liTimer   = null;
 let currentBriefData = null;
 
 /* ---- Tab switching ---- */
@@ -172,6 +173,15 @@ function renderAttendee(line, opts) {
 }
 
 /* ---- Live LinkedIn links under Client contacts textarea ---- */
+function esc(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function debounceLinkedIn() {
+  clearTimeout(liTimer);
+  liTimer = setTimeout(renderClientLinkedInLinks, 400);
+}
+
 function renderClientLinkedInLinks() {
   const raw = gv('f-client').trim();
   const container = document.getElementById('client-linkedin-links');
@@ -189,14 +199,14 @@ function renderClientLinkedInLinks() {
     // Use per-contact company if provided, otherwise fall back to deal company
     const searchCompany = a.company || dealCompany;
     const url = directUrl || buildLinkedInSearchURL(a.name, a.title, searchCompany);
-    const titlePart = a.title ? ` Â· ${a.title}` : '';
-    const companyPart = a.company ? ` Â· ${a.company}` : '';
+    const titlePart = a.title ? ` \u00B7 ${esc(a.title)}` : '';
+    const companyPart = a.company ? ` \u00B7 ${esc(a.company)}` : '';
     const tag = directUrl
       ? `<span class="li-tag li-tag-direct">direct</span>`
       : `<span class="li-tag">search</span>`;
-    return `<a href="${url}" target="_blank" rel="noopener" class="client-li-link">
+    return `<a href="${esc(url)}" target="_blank" rel="noopener" class="client-li-link">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-      <span>${a.name}${titlePart}${companyPart}</span>
+      <span>${esc(a.name)}${titlePart}${companyPart}</span>
       ${tag}
     </a>`;
   }).join('');
@@ -218,12 +228,12 @@ function buildBriefHTML(d) {
   const objLines     = lines(d.obj);
 
   const metaItems = [
-    { label: 'Format',      value: d.format || 'â' },
-    { label: 'Date',        value: [fmtDate(d.date), fmtTime(d.time), d.tz].filter(Boolean).join(' ') || 'â' },
-    { label: 'Location',    value: d.loc || 'â' },
-    { label: 'Deal value',  value: d.value || 'â' },
-    { label: 'Close date',  value: fmtDate(d.close) || 'â' },
-    { label: 'Stage',       value: d.stage || 'â' },
+    { label: 'Format',      value: d.format || '—' },
+    { label: 'Date',        value: [fmtDate(d.date), fmtTime(d.time), d.tz].filter(Boolean).join(' ') || '—' },
+    { label: 'Location',    value: d.loc || '—' },
+    { label: 'Deal value',  value: d.value || '—' },
+    { label: 'Close date',  value: fmtDate(d.close) || '—' },
+    { label: 'Stage',       value: d.stage || '—' },
   ];
 
   return `
@@ -245,11 +255,11 @@ function buildBriefHTML(d) {
       <div class="brief-attendees">
         <div class="brief-attendee-group">
           <div class="brief-attendee-label">Enable team</div>
-          ${enableLines.map(l => renderAttendee(l)).join('') || '<div class="brief-attendee-item" style="color:var(--text-hint)">â</div>'}
+          ${enableLines.map(l => renderAttendee(l)).join('') || '<div class="brief-attendee-item" style="color:var(--text-hint)">—</div>'}
         </div>
         <div class="brief-attendee-group">
           <div class="brief-attendee-label">Client contacts</div>
-          ${clientLines.map((l, i) => renderAttendee(l, { showLinkedIn: true, company: d.company, linkedinUrl: clientLiUrls[i] })).join('') || '<div class="brief-attendee-item" style="color:var(--text-hint)">â</div>'}
+          ${clientLines.map((l, i) => renderAttendee(l, { showLinkedIn: true, company: d.company, linkedinUrl: clientLiUrls[i] })).join('') || '<div class="brief-attendee-item" style="color:var(--text-hint)">—</div>'}
         </div>
       </div>
     </div>` : ''}
@@ -390,7 +400,7 @@ function renderHistory() {
           <span class="hist-badge">${h.meetingType || 'Brief'}</span>
           <span class="hist-company">${h.company || 'Unnamed company'}</span>
         </div>
-        <div class="hist-meta">${[h.stage, h.value, fmtDate(h.date)].filter(Boolean).join(' Â· ')}</div>
+        <div class="hist-meta">${[h.stage, h.value, fmtDate(h.date)].filter(Boolean).join(' \u00B7 ')}</div>
         <div class="hist-meta">Saved ${new Date(h.savedAt).toLocaleString()}</div>
         <div class="hist-actions">
           <button class="btn-secondary btn-sm" style="background:#1a2e3d;color:#fff;border-color:#1a2e3d" onclick="loadFromHistory(${i})">Load into form</button>
@@ -451,7 +461,7 @@ function updateWordCount(id) {
   if (!el || !badge) return;
   const text = el.contentEditable === 'true' ? (el.innerText || '') : (el.value || '');
   const n = countWords(text);
-  badge.textContent = 'Â· ' + n + ' / ' + WC_LIMIT + ' words';
+  badge.textContent = '\u00B7 ' + n + ' / ' + WC_LIMIT + ' words';
   badge.classList.toggle('wc-warn', n >= WC_WARN && n < WC_LIMIT);
   badge.classList.toggle('wc-over', n >= WC_LIMIT);
 }
@@ -499,7 +509,7 @@ function convertToRichEditor(id) {
   const toolbar = document.createElement('div');
   toolbar.className = isAndrew ? 'rich-toolbar andrew-toolbar' : 'rich-toolbar';
   const extraTools = isAndrew ? '' : `
-    <button type="button" class="rich-btn" title="Underline (âU)" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
+    <button type="button" class="rich-btn" title="Underline (⌘U)" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
     <span class="rich-sep"></span>
     <button type="button" class="rich-btn" title="Numbered list" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">
       <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle"><text x="0" y="4" font-size="4" fill="currentColor" font-family="sans-serif">1.</text><rect x="5" y="2.5" width="8" height="2" rx="1" fill="currentColor"/><text x="0" y="8.5" font-size="4" fill="currentColor" font-family="sans-serif">2.</text><rect x="5" y="6" width="8" height="2" rx="1" fill="currentColor"/><text x="0" y="13" font-size="4" fill="currentColor" font-family="sans-serif">3.</text><rect x="5" y="9.5" width="8" height="2" rx="1" fill="currentColor"/></svg>
@@ -510,8 +520,8 @@ function convertToRichEditor(id) {
     </button>
   `;
   toolbar.innerHTML = `
-    <button type="button" class="rich-btn" title="Bold (âB)" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
-    <button type="button" class="rich-btn" title="Italic (âI)" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
+    <button type="button" class="rich-btn" title="Bold (⌘B)" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
+    <button type="button" class="rich-btn" title="Italic (⌘I)" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
     <button type="button" class="rich-btn" title="Bullet list" onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">
       <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle"><circle cx="2" cy="3.5" r="1.2" fill="currentColor"/><rect x="5" y="2.5" width="8" height="2" rx="1" fill="currentColor"/><circle cx="2" cy="7" r="1.2" fill="currentColor"/><rect x="5" y="6" width="8" height="2" rx="1" fill="currentColor"/><circle cx="2" cy="10.5" r="1.2" fill="currentColor"/><rect x="5" y="9.5" width="8" height="2" rx="1" fill="currentColor"/></svg>
       List
@@ -582,7 +592,7 @@ function lookupLinkedIn() {
   if (typeof sendPrompt === 'function') {
     sendPrompt(prompt);
   } else {
-    // Standalone mode â show placeholder
+    // Standalone mode — show placeholder
     contacts.forEach(c => {
       const name = c.split(',')[0].trim();
       const rest = c.split(',').slice(1).join(',').trim();
@@ -599,7 +609,7 @@ function buildLinkedInPrompt(contacts) {
 - What drives someone in their role
 - Priorities or concerns about a rebate management software purchase
 - Any known public information
-- 2â3 personalised talking points for Andrew
+- 2–3 personalised talking points for Andrew
 
 Format each person as a clear, distinct card/section.
 
