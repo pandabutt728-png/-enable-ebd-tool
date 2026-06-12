@@ -98,10 +98,10 @@
             <div class="f"><label for="f-enable">Enable team (names &amp; titles)</label><textarea id="f-enable" placeholder="Tyler Cogan, SAE&#10;Fay Gowani, Sales Director" oninput="debounceSave()"></textarea></div>
             <div class="f">
               <label for="f-client">Client contacts (names &amp; titles)</label>
-              <textarea id="f-client" placeholder="John Smith, CAO, Acme Corp&#10;Jane Doe, President&#10;(Name, Title, Company — company optional)" oninput="debounceSave(); renderClientLinkedInLinks()"></textarea>
+              <textarea id="f-client" placeholder="John Smith, CAO, Acme Corp&#10;Jane Doe, President&#10;(Name, Title, Company — company optional)" oninput="debounceSave(); debounceLinkedIn()"></textarea>
               <div id="client-linkedin-links" class="client-li-links"></div>
               <label for="f-client-li-urls" class="client-li-urls-label">LinkedIn URLs <span class="client-li-urls-hint">(optional · one per line, same order)</span></label>
-              <textarea id="f-client-li-urls" placeholder="https://linkedin.com/in/john-smith&#10;https://linkedin.com/in/jane-doe" style="min-height:52px" oninput="debounceSave(); renderClientLinkedInLinks()"></textarea>
+              <textarea id="f-client-li-urls" placeholder="https://linkedin.com/in/john-smith&#10;https://linkedin.com/in/jane-doe" style="min-height:52px" oninput="debounceSave(); debounceLinkedIn()"></textarea>
             </div>
           </div>
         </section>
